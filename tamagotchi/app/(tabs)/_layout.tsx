@@ -11,27 +11,34 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          headerShown: false,
+          tabBarShowLabel: false,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'game-controller' : 'game-controller-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="tamagotchi"
+        options={{
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
+    <Tabs.Screen
+        name="charts"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+            tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color={color} />
+            ),
         }}
-      />
+    />
     </Tabs>
   );
 }
