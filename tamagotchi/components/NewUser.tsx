@@ -1,5 +1,5 @@
-import { Text, RadioGroup, RadioButton, TextField } from 'react-native-ui-lib';
-import {Component} from "react";
+import {Text, RadioGroup, RadioButton, TextField, WheelPicker, WheelPickerProps} from 'react-native-ui-lib';
+import {Component, useMemo} from "react";
 import { ThemedView } from '@/components/ThemedView';
 import {StyleSheet} from "react-native";
 import {ThemedText} from "@/components/ThemedText";
@@ -11,13 +11,22 @@ export default class NewUser extends Component {
 
         this.state = {
             name: undefined,
-            gender: undefined
+            gender: undefined,
+            feet: undefined,
+            inches: undefined,
         };
     }
 
     render() {
 
+        const FEETCONST = [...Array(8).keys()];
+        const INCHESCONST = [...Array(12).keys()];
+
+        const feetMap = FEETCONST.map(item => ({label: item.toString(), value: item}));
+        const inchesMap = INCHESCONST.map(item => ({label: item.toString(), value: item}));
+
         return (
+
             <>
                 <ThemedView style={styles.content}>
                     <ThemedText style={styles.text}>👋</ThemedText>
@@ -30,6 +39,8 @@ export default class NewUser extends Component {
                         <RadioButton value={"Female"} label={"Female"}/>
                         <RadioButton value={"Unspecified"} label={"Unspecified"}/>
                     </RadioGroup>
+                    <WheelPicker  items={feetMap}  initialValue={0}  onChange={(value: any) => this.setState({feet: value})}/>
+                    <WheelPicker  items={inchesMap}  initialValue={0}  onChange={(value: any) => this.setState({inches: value})}/>
                 </ThemedView>
             </>
         )
