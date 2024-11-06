@@ -1,23 +1,34 @@
 import {Text, RadioGroup, RadioButton, TextField, WheelPicker, WheelPickerProps} from 'react-native-ui-lib';
-import {Component, useMemo} from "react";
+import {Component, useMemo, useState} from "react";
 import { ThemedView } from '@/components/ThemedView';
-import {StyleSheet} from "react-native";
+import {Button, StyleSheet} from "react-native";
 import {ThemedText} from "@/components/ThemedText";
+import * as SQLite from "expo-sqlite";
+import { router } from 'expo-router';
 
-export default class NewUser extends Component {
+export default function NewUser () {
 
-    constructor(props: {}) {
-        super(props);
+    const [name, setName] = useState("");
+    const [feet, setFeet] = useState(0);
+    const [weight, setWeight] = useState(0);
+    const [gender, setGender] = useState("");
+    const [coins, setCoins] = useState(0);
+    const [inches, setInches] = useState(0);
 
-        this.state = {
-            name: undefined,
-            gender: undefined,
-            feet: undefined,
-            inches: undefined,
-        };
+    async function submitPress() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const existing_name = await db.getFirstAsync('SELECT name FROM preferences');
+        if (existing_name == null) {
+            console.log(existing_name);
+        }
+        await db.runAsync(
+            `INSERT INTO user (name, height, weight, gender, coins) VALUES (?, ?, ?, ?, ?);`,
+            [name, feet*12+inches, weight, gender, coins]
+        ).catch(function () {
+            console.log("Preference Promise Rejected");
+        });
+
     }
-
-    render() {
 
         const FEETCONST = [...Array(8).keys()];
         const INCHESCONST = [...Array(12).keys()];
@@ -30,21 +41,21 @@ export default class NewUser extends Component {
             <>
                 <ThemedView style={styles.content}>
                     <ThemedText style={styles.text}>👋</ThemedText>
-                    <TextField placeholder={'Input Name'}  onChangeText={(value: any) => this.setState({name: value})}/>
-                    <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => this.setState({gender: value})}>
+                    <TextField placeholder={'Input Name'}  onChangeText={(value: any) => setName(value)}/>
+                    <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => setGender(value)}>
                         <Text marginB-20 text60 $textDefault>
-                            Gender{'\n'}
+                            Sex{'\n'}
                         </Text>
-                        <RadioButton value={"Male"} label={"Male"}/>
-                        <RadioButton value={"Female"} label={"Female"}/>
-                        <RadioButton value={"Unspecified"} label={"Unspecified"}/>
+                        <RadioButton value={"M"} label={"Male"}/>
+                        <RadioButton value={"F"} label={"Female"}/>
+                        <RadioButton value={"U"} label={"Unspecified"}/>
                     </RadioGroup>
-                    <WheelPicker  items={feetMap}  initialValue={0}  onChange={(value: any) => this.setState({feet: value})}/>
-                    <WheelPicker  items={inchesMap}  initialValue={0}  onChange={(value: any) => this.setState({inches: value})}/>
+                    <WheelPicker  items={feetMap}  initialValue={0}  onChange={(value: any) => setFeet(value)}/>
+                    <WheelPicker  items={inchesMap}  initialValue={0}  onChange={(value: any) => setInches(value)}/>
+                    <Button title="Submit" onPress={submitPress} color="#841584" />
                 </ThemedView>
             </>
-        )
-    }
+        );
 }
 
 const styles = StyleSheet.create({
