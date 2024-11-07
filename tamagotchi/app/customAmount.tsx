@@ -18,6 +18,7 @@ export default function CustomAmount () {
         ).catch(function () {
             console.log("Bottle Add Promise Rejected");
         });
+        router.replace('/(tabs)/')
     }
 
     return (

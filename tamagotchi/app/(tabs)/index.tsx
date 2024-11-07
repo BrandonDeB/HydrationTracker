@@ -1,66 +1,32 @@
 import * as SQLite from 'expo-sqlite';
 import {useState, useEffect } from 'react';
 import {Button, View, StyleSheet} from "react-native";
-import {NumberInput, Text} from "react-native-ui-lib";
 import { router } from 'expo-router';
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
-import AddBottle from "../addBottle"
-import CustomAmount from "@/app/customAmount";
+import {number} from "prop-types";
 
 
 export default function HomeScreen() {
 
     const [hydrationLevel, setHydrationLevel] = useState(100);
     const [waterIntake, setWaterIntake] = useState(0);
-    const [waterBottles, setWaterBottles] = useState([0]);
-    const [addBottleBool, setAddBottleBool] = useState(false);  // False if going to Add Bottle page and True if going to custom amount
-    const [showPopup, setShowPopup] = useState(false);
-    const [size, setSize] = useState(0);
-
-    async function saveBottle() {
-        const db = await SQLite.openDatabaseAsync('hydration.db');
-        const bottleSize: { size: number } | null = await db.getFirstAsync('SELECT size FROM bottles WHERE size = '+size);
-        if (bottleSize == null) {
-            await db.runAsync(
-                `INSERT INTO bottles (size) VALUES (?);`,
-                [size]
-            ).catch(function () {
-                console.log("Bottle Add Promise Rejected");
-            });
-            await pullBottles();
-            setShowPopup(false);
-        } else {
-            console.log(bottleSize.size);
-        }
-    }
-
-
+    const [waterBottles, setWaterBottles] = useState([]);
 
     async function pullBottles() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
         const allBottles: any = await db.getAllAsync('SELECT * FROM bottles').catch(function () {
             console.log("All Bottles Promise Rejected");
         });
-        for (const bottle of allBottles) {
-            console.log("Setting water bottles")
-            setWaterBottles([...waterBottles, bottle.size]);
-        }
-    }
-
-    function changeIntake(amount: number) {
-        setWaterIntake(amount);
+        setWaterBottles(allBottles);
     }
 
     function addNewBottle() {
-        setAddBottleBool(true);
-        setSize(0);
-        setShowPopup(true);
+        router.replace('/addBottle')
     }
 
     function addCustomAmount() {
-        setAddBottleBool(false);
-        setShowPopup(true);
+        router.replace('/customAmount')
     }
 
     useEffect(() => {
@@ -79,30 +45,21 @@ export default function HomeScreen() {
 
     return (
         <>
-            {showPopup ? (addBottleBool ?
-                    <ThemedView style={styles.content}>
-                        <Button title={'Back'} onPress={() => setShowPopup(false)}></Button>
-                        <NumberInput initialNumber={0} fractionDigits={0} onChangeNumber={(value) => setSize(Number(value.userInput))}/>
-                        <Button title={'Save'} onPress={saveBottle}></Button>
-                    </ThemedView>
-            :       <ThemedView style={styles.content}>
-                        <Button title={'Back'} onPress={() => setShowPopup(false)}></Button>
-                        <Button title={'Save'} onPress={saveBottle}></Button>
-                    </ThemedView>
-            ) :
-                <ThemedView style={styles.content}>
-                    <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
-                    <ThemedText>{waterIntake}</ThemedText>
-                    <ThemedText>Saved Water Bottles</ThemedText>
-                    {
-                        waterBottles.map((bottle) => (
-                            <ThemedText key={bottle}>{bottle}</ThemedText>
-                        ))
-                    }
-                    <Button title={'Add New Bottle'} onPress={addNewBottle}></Button>
-                    <Button title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
-                </ThemedView>
-            }
+            <ThemedView style={styles.content}>
+                <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
+                <ThemedText style={styles.text}>{waterIntake}</ThemedText>
+                <ThemedText>Saved Water Bottles</ThemedText>
+                {
+                    waterBottles.map((bottle: {size: number}, index) => (
+                        <ThemedView key={index*3}>
+                            <ThemedText key={index*3+1}>{bottle.size}</ThemedText>
+                            <Button key={index*3+2} title={'+'} onPress={() => setWaterIntake(waterIntake+bottle.size)}></Button>
+                        </ThemedView>
+                    ))
+                }
+                <Button title={'Add New Bottle'} onPress={addNewBottle}></Button>
+                <Button title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
+            </ThemedView>
         </>
     )
 }
@@ -145,6 +102,7 @@ async function migrateDbIfNeeded() {
 
 const styles = StyleSheet.create({
     text: {
+        padding: 20,
         fontSize: 56,
         lineHeight: 32,
         marginTop: -6,

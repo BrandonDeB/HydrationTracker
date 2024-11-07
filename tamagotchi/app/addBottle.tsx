@@ -1,4 +1,12 @@
-import {Text, RadioGroup, RadioButton, TextField, WheelPicker, WheelPickerProps} from 'react-native-ui-lib';
+import {
+    Text,
+    RadioGroup,
+    RadioButton,
+    TextField,
+    WheelPicker,
+    WheelPickerProps,
+    NumberInput
+} from 'react-native-ui-lib';
 import {Component, useMemo, useState} from "react";
 import { ThemedView } from '@/components/ThemedView';
 import {Button, StyleSheet} from "react-native";
@@ -18,11 +26,18 @@ export default function AddBottle () {
         ).catch(function () {
             console.log("Bottle Add Promise Rejected");
         });
+        // await db.execAsync(`
+        //     DELETE FROM bottles WHERE size > 0
+        // `).catch(function () {
+        //     console.log("Create Table Promise Rejected");
+        // });
+        router.replace('/(tabs)/')
     }
 
     return (
         <>
             <ThemedView style={styles.content}>
+                <NumberInput onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))} fractionDigits={0} />
                 <Button title={'Save'} onPress={saveBottle}></Button>
             </ThemedView>
         </>
