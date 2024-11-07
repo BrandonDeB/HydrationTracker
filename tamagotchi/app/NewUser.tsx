@@ -17,7 +17,7 @@ export default function NewUser () {
 
     async function submitPress() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
-        const existing_name = await db.getFirstAsync('SELECT name FROM preferences');
+        const existing_name = await db.getFirstAsync('SELECT name FROM user');
         if (existing_name == null) {
             console.log(existing_name);
         }
@@ -27,6 +27,7 @@ export default function NewUser () {
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
+        router.replace("/(tabs)/");
 
     }
 
