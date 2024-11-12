@@ -1,4 +1,12 @@
-import {Text, RadioGroup, RadioButton, TextField, WheelPicker, WheelPickerProps} from 'react-native-ui-lib';
+import {
+    Text,
+    RadioGroup,
+    RadioButton,
+    TextField,
+    WheelPicker,
+    WheelPickerProps,
+    NumberInput
+} from 'react-native-ui-lib';
 import {Component, useMemo, useState} from "react";
 import { ThemedView } from '@/components/ThemedView';
 import {Button, StyleSheet} from "react-native";
@@ -42,7 +50,7 @@ export default function NewUser () {
             <>
                 <ThemedView style={styles.content}>
                     <ThemedText style={styles.text}>👋</ThemedText>
-                    <TextField placeholder={'Input Name'}  onChangeText={(value: any) => setName(value)}/>
+                    <TextField style={styles.text} placeholder={'Input Name'}  onChangeText={(value: any) => setName(value)}/>
                     <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => setGender(value)}>
                         <Text marginB-20 text60 $textDefault>
                             Sex{'\n'}
@@ -54,6 +62,7 @@ export default function NewUser () {
                     <WheelPicker  items={feetMap}  initialValue={0}  onChange={(value: any) => setFeet(value)}/>
                     <WheelPicker  items={inchesMap}  initialValue={0}  onChange={(value: any) => setInches(value)}/>
                     <Button title="Submit" onPress={submitPress} color="#841584" />
+                    <NumberInput leadingText={"Weight"} leadingTextStyle={styles.text} containerStyle={styles.content} onChangeNumber={(weightValue) => setWeight(Number(weightValue.userInput))} fractionDigits={0} />
                 </ThemedView>
             </>
         );

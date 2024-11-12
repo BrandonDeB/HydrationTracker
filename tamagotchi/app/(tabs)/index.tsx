@@ -9,9 +9,9 @@ import {number} from "prop-types";
 
 export default function HomeScreen() {
 
-    const [hydrationLevel, setHydrationLevel] = useState(100);
     const [waterIntake, setWaterIntake] = useState(0);
     const [waterBottles, setWaterBottles] = useState([]);
+    const [steps, setSteps] = useState(0);
 
     async function pullBottles() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
@@ -19,6 +19,39 @@ export default function HomeScreen() {
             console.log("All Bottles Promise Rejected");
         });
         setWaterBottles(allBottles);
+    }
+
+    async function pullHydration() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const hydration: any = await db.getAllAsync(
+            `SELECT SUM(hydration) AS total_hydration 
+            FROM records
+            WHERE DATE(time) = CURRENT_DATE;`).catch(function () {
+            console.log("Current Hydration Promise Rejected");
+        });
+        console.log(hydration);
+        setWaterIntake(hydration[0].total_hydration);
+    }
+
+    async function drinkBottle(size: number) {
+        setWaterIntake(waterIntake+size);
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        await db.runAsync(
+            `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
+            [steps, size]
+        ).catch(function () {
+            console.log("Bottle Add Promise Rejected");
+        });
+    }
+
+    async function removeBottle(size: number) {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        await db.runAsync(
+            `DELETE FROM bottles WHERE size=?;`, size
+        ).catch(function () {
+            console.log("Bottle Remove Promise Rejected");
+        });
+        await pullBottles();
     }
 
     function addNewBottle() {
@@ -39,6 +72,7 @@ export default function HomeScreen() {
                 router.push('/NewUser');
             }
             await pullBottles();
+            await pullHydration();
         }
         setup();
     }, []);
@@ -47,18 +81,21 @@ export default function HomeScreen() {
         <>
             <ThemedView style={styles.content}>
                 <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
-                <ThemedText style={styles.text}>{waterIntake}</ThemedText>
-                <ThemedText>Saved Water Bottles</ThemedText>
+                <ThemedText style={styles.intake}>{waterIntake} fl oz</ThemedText>
+                <ThemedText style={styles.saved}>Saved Water Bottles</ThemedText>
                 {
                     waterBottles.map((bottle: {size: number}, index) => (
-                        <ThemedView key={index*3}>
-                            <ThemedText key={index*3+1}>{bottle.size}</ThemedText>
-                            <Button key={index*3+2} title={'+'} onPress={() => setWaterIntake(waterIntake+bottle.size)}></Button>
+                        <ThemedView style={styles.bottleContainer} key={index*4}>
+                            <Button key={index*4+4} title={'-'} onPress={() => removeBottle(bottle.size)}></Button>
+                            <ThemedText style={styles.bottleAmount} key={index*4+1}>{bottle.size}</ThemedText>
+                            <Button key={index*4+2} title={'+'} onPress={() => drinkBottle(bottle.size)}></Button>
                         </ThemedView>
                     ))
                 }
-                <Button title={'Add New Bottle'} onPress={addNewBottle}></Button>
-                <Button title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
+                <ThemedView style={styles.buttons}>
+                    <Button color={"#5FC1FF"} title={'Add New Bottle'} onPress={addNewBottle}></Button>
+                    <Button color={"#5FC1FF"} title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
+                </ThemedView>
             </ThemedView>
         </>
     )
@@ -69,7 +106,7 @@ async function migrateDbIfNeeded() {
     const db = await SQLite.openDatabaseAsync('hydration.db');
     await db.execAsync(`
             CREATE TABLE IF NOT EXISTS records (
-                time TIMESTAMP(20),
+                time TIMESTAMP(20) DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 steps INT(20),
                 hydration INT(20),
                 PRIMARY KEY (time)
@@ -101,11 +138,36 @@ async function migrateDbIfNeeded() {
 }
 
 const styles = StyleSheet.create({
+    bottleAmount: {
+        marginLeft: 'auto',
+        marginRight:'auto'
+    },
+    bottleContainer: {
+        padding: 10,
+        alignItems: 'center',
+        backgroundColor: "#5FC1FF",
+        flexDirection: 'row',
+        alignSelf: 'center',
+        width: '80%'
+    },
+    saved: {
+        padding: 10,
+        fontSize: 16,
+        textAlign: 'center',
+    },
     text: {
-        padding: 20,
-        fontSize: 56,
+        padding: 10,
+        paddingTop: 80,
+        fontSize: 24,
         lineHeight: 32,
-        marginTop: -6,
+        textAlign: "center",
+    },
+    intake: {
+        fontSize: 48,
+        width: '100%',
+        backgroundColor: "#5FC1FF",
+        lineHeight: 100,
+        textAlign: "center"
     },
     container: {
         flex: 1,
@@ -116,9 +178,17 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 32,
+        padding: 0,
         gap: 16,
-        overflow: 'hidden',
     },
+    buttons: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+    },
+    button: {
+        backgroundColor: "#5FC1FF",
+        textAlign: "center",
+        color: 'white',
+    }
 });
 

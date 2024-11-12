@@ -16,14 +16,7 @@ export default class Charts extends Component {
     render() {
         return (
             <>
-                <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => this.setState({gender: value})}>
-                    <Text marginB-20 text60 $textDefault>
-                        Gender{'\n'}
-                    </Text>
-                    <RadioButton value={"Male"} label={"Male"}/>
-                    <RadioButton value={"Female"} label={"Female"}/>
-                    <RadioButton value={"Unspecified"} label={"Unspecified"}/>
-                </RadioGroup>
+
             </>
         )
     }
