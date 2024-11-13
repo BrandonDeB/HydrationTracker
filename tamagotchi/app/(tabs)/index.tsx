@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: "#5FC1FF",
         textAlign: "center",
-        color: 'white',
     }
 });
 

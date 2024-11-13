@@ -13,7 +13,6 @@ import {Button, StyleSheet} from "react-native";
 import {ThemedText} from "@/components/ThemedText";
 import * as SQLite from "expo-sqlite";
 import {router} from "expo-router";
-import {white} from "colorette";
 
 export default function CustomAmount () {
 
@@ -28,7 +27,7 @@ export default function CustomAmount () {
         ).catch(function () {
             console.log("Bottle Add Promise Rejected");
         });
-        router.replace('/(tabs)/')
+        router.replace('/(tabs)')
     }
 
     return (

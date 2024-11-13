@@ -31,7 +31,7 @@ export default function AddBottle () {
         // `).catch(function () {
         //     console.log("Create Table Promise Rejected");
         // });
-        router.replace('/(tabs)/')
+        router.replace('/(tabs)')
     }
 
     return (
