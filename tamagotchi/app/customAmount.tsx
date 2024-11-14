@@ -45,12 +45,10 @@ const styles = StyleSheet.create({
         fontSize: 28,
         lineHeight: 32,
         marginTop: -6,
-        color: 'white',
     },
     container: {
         flex: 1,
-        backgroundColor: '5FC1FF',
-        color: 'white'
+        backgroundColor: '#5FC1FF',
     },
     header: {
         height: 250,

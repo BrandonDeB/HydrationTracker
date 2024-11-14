@@ -1,20 +1,24 @@
 import {Image, StyleSheet, Platform, ScrollView, Button} from 'react-native';
-import * as SQLite from 'expo-sqlite';
 import React, {useEffect} from "react";
 import HydrationBar from "@/components/HydrationBar";
 import {ThemedView} from "@/components/ThemedView";
-import {IconButton} from "@mui/material";
-import SchoolIcon from "@mui/icons-material/School";
-import SettingsIcon from "@mui/icons-material/Settings";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function Tamagotchi() {
 
+    function goToHats() {
+        console.log("Hats");
+    }
+
     return (
-        <>
+        <ThemedView>
             <ThemedView style={styles.topBar}>
+                <MaterialCommunityIcons name="hat-fedora" size={32} color="black" backgroundColor="#5FC1FF"/>
                 <HydrationBar></HydrationBar>
+                <MaterialCommunityIcons name="cog" size={32} color="black" backgroundColor="#5FC1FF"/>
             </ThemedView>
-        </>
+        </ThemedView>
     );
 }
 
@@ -22,10 +26,13 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: "row",
         alignSelf: "center",
-        marginTop: 50
+        margin: 50,
+        width: "80%",
+        backgroundColor: "rgba(76, 175, 80, 0.0)"
     },
     iconButton: {
-        backgroundColor: "#5FC1FF",
         borderRadius: 4,
+        alignSelf: "center",
+        backgroundColor: "#5FC1FF",
     }
 });
