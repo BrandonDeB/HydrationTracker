@@ -33,7 +33,7 @@ export default function CustomAmount () {
     return (
         <>
             <ThemedView style={styles.content}>
-                <NumberInput trailingText={'fl oz'} textFieldProps={styles.text} trailingTextStyle={styles.text} onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))} fractionDigits={0} />
+                <NumberInput trailingText={'fl oz'} textFieldProps={{style: styles.text}} trailingTextStyle={styles.text} onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))} fractionDigits={0} />
                 <Button title={'Custom Amount'} onPress={saveCustomAmount}></Button>
             </ThemedView>
         </>
@@ -42,9 +42,7 @@ export default function CustomAmount () {
 
 const styles = StyleSheet.create({
     text: {
-        fontSize: 28,
-        lineHeight: 32,
-        marginTop: -6,
+        fontSize: 16,
     },
     container: {
         flex: 1,

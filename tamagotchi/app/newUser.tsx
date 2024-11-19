@@ -30,12 +30,12 @@ export default function NewUser () {
             console.log(existing_name);
         }
         await db.runAsync(
-            `INSERT INTO user (name, height, weight, gender, coins) VALUES (?, ?, ?, ?, ?);`,
-            [name, feet*12+inches, weight, gender, coins]
+            `UPDATE user SET name=?, height=?, weight=?, gender=?;`,
+            [name, feet*12+inches, weight, gender]
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
-        router.replace("/(tabs)/");
+        router.replace("/(tabs)");
 
     }
 
@@ -49,20 +49,27 @@ export default function NewUser () {
 
             <>
                 <ThemedView style={styles.content}>
-                    <ThemedText style={styles.text}>👋</ThemedText>
                     <TextField style={styles.text} placeholder={'Input Name'}  onChangeText={(value: any) => setName(value)}/>
                     <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => setGender(value)}>
-                        <Text marginB-20 text60 $textDefault>
-                            Sex{'\n'}
+                        <Text text60 $textDefault>
+                            Sex
                         </Text>
                         <RadioButton value={"M"} label={"Male"}/>
                         <RadioButton value={"F"} label={"Female"}/>
                         <RadioButton value={"U"} label={"Unspecified"}/>
                     </RadioGroup>
-                    <WheelPicker  items={feetMap}  initialValue={0}  onChange={(value: any) => setFeet(value)}/>
-                    <WheelPicker  items={inchesMap}  initialValue={0}  onChange={(value: any) => setInches(value)}/>
+                    <Text text60 $textDefault>
+                        Height
+                    </Text>
+                    <ThemedView style={styles.heightSelect}>
+                        <WheelPicker label={"Feet"} items={feetMap}  initialValue={0}  onChange={(value: any) => setFeet(value)}/>
+                        <WheelPicker  label={"Inches"} items={inchesMap}  initialValue={0}  onChange={(value: any) => setInches(value)}/>
+                    </ThemedView>
+                    <Text text60 $textDefault>
+                        Weight
+                    </Text>
+                    <NumberInput textFieldProps={{style: styles.text}} containerStyle={styles.content} onChangeNumber={(weightValue) => setWeight(Number(weightValue.userInput))} fractionDigits={0} />
                     <Button title="Submit" onPress={submitPress} color="#841584" />
-                    <NumberInput leadingText={"Weight"} leadingTextStyle={styles.text} containerStyle={styles.content} onChangeNumber={(weightValue) => setWeight(Number(weightValue.userInput))} fractionDigits={0} />
                 </ThemedView>
             </>
         );
@@ -71,8 +78,7 @@ export default function NewUser () {
 const styles = StyleSheet.create({
     text: {
         fontSize: 28,
-        lineHeight: 32,
-        marginTop: -6,
+        marginLeft: -16,
     },
     container: {
         flex: 1,
@@ -86,5 +92,8 @@ const styles = StyleSheet.create({
         padding: 32,
         gap: 16,
         overflow: 'hidden',
+    },
+    heightSelect: {
+        flexDirection: 'row',
     },
 });

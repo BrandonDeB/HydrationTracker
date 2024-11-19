@@ -18,7 +18,7 @@ export default function HydrationBar () {
 
 const styles = StyleSheet.create({
     bar: {
-        width: "60%",
+        width: "80%",
         height: "100%",
         alignSelf: "center",
         backgroundColor: "#5FC1FF",

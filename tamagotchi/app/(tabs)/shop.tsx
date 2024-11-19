@@ -1,9 +1,7 @@
-import {Image, StyleSheet, Platform, ScrollView, Button} from 'react-native';
-import React, {useEffect, useState} from "react";
-import HydrationBar from "@/components/HydrationBar";
+import {StyleSheet} from 'react-native';
+import React, {useState} from "react";
 import {ThemedView} from "@/components/ThemedView";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {Text} from "react-native-ui-lib";
 
 export default function Shop() {
 
@@ -11,26 +9,14 @@ export default function Shop() {
 
     return (
         <ThemedView>
-            <ThemedView style={styles.topBar}>
-                <MaterialCommunityIcons name="hat-fedora" size={32} color="black" backgroundColor="#5FC1FF"/>
-                <HydrationBar></HydrationBar>
-                <MaterialCommunityIcons name="cog" size={32} color="black" backgroundColor="#5FC1FF"/>
-            </ThemedView>
+            <Text style={styles.header}>This is the shop page!</Text>
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    topBar: {
-        flexDirection: "row",
-        alignSelf: "center",
-        margin: 50,
-        width: "80%",
-        backgroundColor: "rgba(76, 175, 80, 0.0)"
-    },
-    iconButton: {
-        borderRadius: 4,
-        alignSelf: "center",
-        backgroundColor: "#5FC1FF",
+    header: {
+        marginTop: 60,
+        fontSize: 48,
     }
 });
