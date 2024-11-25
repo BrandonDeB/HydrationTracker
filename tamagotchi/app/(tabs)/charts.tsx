@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#cbe7fb",
         borderRadius: 8,
         padding: 16,
-        marginBottom: 16,
+        marginBottom: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     progressBar: {
         height: 20,
         borderRadius: 5,
-        marginBottom: 2,
+        marginBottom: 8,
     },
     progressText: {
         fontSize: 16,
