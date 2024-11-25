@@ -5,14 +5,15 @@ import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import { ProgressBar } from 'react-native-paper';
 
-export default function Charts({waterIntakeData}) {   //NEEDS PARENT COMPONENT TO TRACK/UPDATE WATER INTAKE BASED ON GOALS...
-
+export default function Charts({waterIntake}) {   
+    
     const [week, setWeek] = useState("Nov 11 - Nov 17");
 
     const [achievements, setAchievements] = useState([
         {id: 1, description: "Track water intake for 7 consecutive days.", progress: 0, goal: 7},
         {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 0, goal: 5},
         {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 0, goal: 3},
+        {id: 4, description: "Drink a total of 100 fl oz in a day.", progress: 0, goal: 100},
     ]);
     
     const barData = [
@@ -27,26 +28,28 @@ export default function Charts({waterIntakeData}) {   //NEEDS PARENT COMPONENT T
 
     // Update achievements based on actual user tracking data w waterIntakeData prop
     useEffect(() => {
-        if (waterIntakeData) {
+        if (waterIntake !== undefined && waterIntake !== null) {
             setAchievements(prevAchievements => prevAchievements.map(item => {
                 let newProgress = item.progress;
 
                 // Update progress based on the achievement type
                 if (item.id === 1) {
                     // Track water intake for 7 consecutive days
-                    newProgress = Math.min(item.goal, waterIntakeData.consecutiveDays);
+                    newProgress = Math.min(item.goal, waterIntake.consecutiveDays);
                 } else if (item.id === 2) {
                     // Hit hydration goal 5 times in a week
-                    newProgress = Math.min(item.goal, waterIntakeData.daysGoalMet);
+                    newProgress = Math.min(item.goal, waterIntake.daysGoalMet);
                 } else if (item.id === 3) {
                     // Log water before 9 AM for 3 days in a row
-                    newProgress = Math.min(item.goal, waterIntakeData.daysLoggedBefore9AM);
+                    newProgress = Math.min(item.goal, waterIntake.daysLoggedBefore9AM);
+                } else if (item.id === 4) {
+                    // Drink a total of 100 fl oz in a day
+                    newProgress = Math.min(item.goal, waterIntake);
                 }
-
                 return {...item, progress: newProgress};
             }));
         }
-    }, [waterIntakeData]);
+    }, [waterIntake]);
 
 
     // Function to calculate progress percentage
