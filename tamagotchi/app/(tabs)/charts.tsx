@@ -29,7 +29,7 @@ export default function Charts() {
     // Function to calculate progress percentage
     const calculateProgress = (progress, goal) => {
         if (goal === 0) return 0;
-        return (progress / goal) * 100;
+        return Math.round((progress / goal) * 100);
     };
 
     const getProgressColor = (progress, goal) => {
@@ -71,7 +71,7 @@ export default function Charts() {
             
                             {/* Progress Bar */}
                             <ProgressBar 
-                                progress={item.progress / item.goal}
+                                progress={Math.min(1, Math.max(0, item.progress / item.goal))}
                                 color={getProgressColor(item.progress, item.goal)}
                                 style={styles.progressBar}
                             />
