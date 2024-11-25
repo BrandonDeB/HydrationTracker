@@ -46,6 +46,8 @@ export default function Charts() {
 
     const hasAchievements = achievements.length > 0;
 
+    const clampedProgress = Math.min(1, Math.max(0, item.progress / item.goal));
+
     return (
             <ScrollView>
                 <ThemedView style={styles.chart}>
@@ -71,7 +73,7 @@ export default function Charts() {
             
                             {/* Progress Bar */}
                             <ProgressBar 
-                                progress={Math.min(1, Math.max(0, item.progress / item.goal))}
+                                progress={clampedProgress}
                                 color={getProgressColor(item.progress, item.goal)}
                                 style={styles.progressBar}
                             />
