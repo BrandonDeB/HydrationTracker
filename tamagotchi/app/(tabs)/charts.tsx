@@ -1,4 +1,4 @@
-import {StyleSheet, ScrollView, View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, FlatList, useEffect} from 'react-native';
 import React, {useState} from "react";
 import { BarChart } from "react-native-gifted-charts";
 import {ThemedView} from "@/components/ThemedView";
