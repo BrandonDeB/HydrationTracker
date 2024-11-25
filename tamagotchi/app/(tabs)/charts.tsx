@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     achievementItem: {
-        backgroundColor: "#e3f2fd",
+        backgroundColor: "#cbe7fb",
         borderRadius: 8,
         padding: 16,
         marginBottom: 16,
