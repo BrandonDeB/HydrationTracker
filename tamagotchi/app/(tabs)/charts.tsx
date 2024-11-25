@@ -46,8 +46,6 @@ export default function Charts() {
 
     const hasAchievements = achievements.length > 0;
 
-    const clampedProgress = Math.min(1, Math.max(0, item.progress / item.goal));
-
     return (
             <ScrollView>
                 <ThemedView style={styles.chart}>
@@ -67,23 +65,26 @@ export default function Charts() {
                 {/* Achievements Section */}
                 <Text style={styles.achievementsHeader}>Achievements</Text>
                 {hasAchievements ? (
-                    achievements.map((item) => (
-                        <View key={item.id} style={styles.achievementItem}>
-                            <Text style={styles.achievementDescription}>{item.description}</Text>
+                    achievements.map((item) => {
+                        const clampedProgress = Math.min(1, Math.max(0, item.progress / item.goal));
+                        return(
+                            <View key={item.id} style={styles.achievementItem}>
+                                <Text style={styles.achievementDescription}>{item.description}</Text>
             
-                            {/* Progress Bar */}
-                            <ProgressBar 
-                                progress={clampedProgress}
-                                color={getProgressColor(item.progress, item.goal)}
-                                style={styles.progressBar}
-                            />
+                                {/* Progress Bar */}
+                                <ProgressBar 
+                                    progress={clampedProgress}
+                                    color={getProgressColor(item.progress, item.goal)}
+                                    style={styles.progressBar}
+                                />
 
-                            {/* Progress Percentage */}
-                            <Text style={styles.progressText}>
-                                {Math.round(calculateProgress(item.progress, item.goal))}% Complete
-                            </Text>
-                         </View>
-                    ))
+                                {/* Progress Percentage */}
+                                <Text style={styles.progressText}>
+                                    {Math.round(calculateProgress(item.progress, item.goal))}% Complete
+                                </Text>
+                            </View>
+                        );
+                    })
                 ) : (
                     <Text style={styles.emptyAchievements}>No achievements to display.</Text>
                 )}
