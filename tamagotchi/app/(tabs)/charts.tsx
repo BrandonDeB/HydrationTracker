@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         margin: 50,
         width: "80%",
-        backgroundColor: "rgba(76, 175, 80, 0.0)"
+        backgroundColor: "rgba(76, 175, 80, 0.0)",
     },
     iconButton: {
         borderRadius: 4,
@@ -115,12 +115,12 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         width: "95%",
         marginTop: 50,
-        padding: 16
+        padding: 16,
     },
     text: {
         alignSelf: "center",
         fontSize: 24,
-        margin: 10
+        margin: 10,
     },
     week: {
         fontSize: 16,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#5FC1FF",
         textAlign: "center",
         padding: 8,
-        color: "#ffffff"
+        color: "#ffffff",
     },
     achievementsPane: {
         padding: 16,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     achievementDescription: {
         fontSize: 16,
         marginBottom: 8,
-        color: "#455a64"
+        color: "#455a64",
     },
     progressBar: {
         height: 10,
