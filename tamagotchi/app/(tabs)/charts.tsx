@@ -67,7 +67,7 @@ export default function Charts() {
                 <Text style={styles.achievementsHeader}>Achievements</Text>
                 {hasAchievements ? (
                     achievements.map((item) => {
-                        const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, item.progress / item.goal));
+                        const clampedProgress = item.goal === 0 ? 0 : parseFloat(Math.min(1, Math.max(0, item.progress / item.goal).toFixed(2));
                         return(
                             <View key={item.id} style={styles.achievementItem}>
                                 <Text style={styles.achievementDescription}>{item.description}</Text>
