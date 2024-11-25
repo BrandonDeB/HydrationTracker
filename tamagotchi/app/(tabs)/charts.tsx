@@ -144,6 +144,11 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 16,
         marginBottom: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
     },
     achievementDescription: {
         fontSize: 16,
