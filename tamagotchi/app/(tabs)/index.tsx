@@ -101,7 +101,7 @@ export default function HomeScreen() {
         <>
             <ThemedView style={styles.content}>
                 <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
-                <ThemedText style={styles.intake}>{waterIntake} fl oz</ThemedText>
+                <ThemedText style={styles.intake}>{waterIntake.totalWaterIntake} fl oz</ThemedText>
                 <ThemedText style={styles.saved}>Saved Water Bottles</ThemedText>
                 {
                     waterBottles.map((bottle: {size: number}, index) => (
