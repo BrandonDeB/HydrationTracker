@@ -5,7 +5,7 @@ import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import { ProgressBar } from 'react-native-paper';
 
-export default function Charts({waterIntake}) {   
+export default function Charts({waterIntakeData}) {   
     
     const [week, setWeek] = useState("Nov 11 - Nov 17");
 
@@ -28,28 +28,28 @@ export default function Charts({waterIntake}) {
 
     // Update achievements based on actual user tracking data w waterIntakeData prop
     useEffect(() => {
-        if (waterIntake !== undefined && waterIntake !== null) {
+        if (waterIntakeData !== undefined && waterIntakeData !== null) {
             setAchievements(prevAchievements => prevAchievements.map(item => {
                 let newProgress = item.progress;
 
                 // Update progress based on the achievement type
                 if (item.id === 1) {
                     // Track water intake for 7 consecutive days
-                    newProgress = Math.min(item.goal, waterIntake.consecutiveDays);
+                    newProgress = Math.min(item.goal, waterIntakeData.consecutiveDays);
                 } else if (item.id === 2) {
                     // Hit hydration goal 5 times in a week
-                    newProgress = Math.min(item.goal, waterIntake.daysGoalMet);
+                    newProgress = Math.min(item.goal, waterIntakeData.daysGoalMet);
                 } else if (item.id === 3) {
                     // Log water before 9 AM for 3 days in a row
-                    newProgress = Math.min(item.goal, waterIntake.daysLoggedBefore9AM);
+                    newProgress = Math.min(item.goal, waterIntakeData.daysLoggedBefore9AM);
                 } else if (item.id === 4) {
                     // Drink a total of 100 fl oz in a day
-                    newProgress = Math.min(item.goal, waterIntake);
+                    newProgress = Math.min(item.goal, waterIntakeData);
                 }
                 return {...item, progress: newProgress};
             }));
         }
-    }, [waterIntake]);
+    }, [waterIntakeData]);
 
 
     // Function to calculate progress percentage
