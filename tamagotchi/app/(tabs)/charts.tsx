@@ -5,7 +5,7 @@ import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import { ProgressBar } from 'react-native-paper';
 
-export default function Charts({waterIntakeData}) {
+export default function Charts({waterIntakeData}) {   //NEEDS PARENT COMPONENT TO TRACK/UPDATE WATER INTAKE BASED ON GOALS...
 
     const [week, setWeek] = useState("Nov 11 - Nov 17");
 
@@ -25,7 +25,7 @@ export default function Charts({waterIntakeData}) {
         {value: 300, label: 'S'},
     ];
 
-    // Update achievements based on actual user tracking data
+    // Update achievements based on actual user tracking data w waterIntakeData prop
     useEffect(() => {
         if (waterIntakeData) {
             setAchievements(prevAchievements => prevAchievements.map(item => {
