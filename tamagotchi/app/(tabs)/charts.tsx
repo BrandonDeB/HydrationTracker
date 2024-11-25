@@ -53,7 +53,7 @@ export default function Charts() {
     const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
 
     return (
-            
+        <View>
             <ThemedView style={styles.chart}>
                 <ThemedText style={styles.text}>Weekly Overview</ThemedText>
                 <ThemedText style={styles.week}>{week}</ThemedText>
@@ -67,34 +67,38 @@ export default function Charts() {
                     xAxisThickness={0}
                 />
             </ThemedView>
-            <ScrollView>
-                {/* Achievements Section */}
-                <Text style={styles.achievementsHeader}>Achievements</Text>
-                {hasAchievements ? (
-                    achievements.map((item) => {
-                        const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, parseFloat((item.progress / item.goal).toFixed(2))));
-                        return(
-                            <View key={item.id} style={styles.achievementItem}>
-                                <Text style={styles.achievementDescription}>{item.description}</Text>
             
-                                {/* Progress Bar */}
-                                <ProgressBar 
-                                    progress={clampedProgress}
-                                    color={getProgressColor(item.progress, item.goal)}
-                                    style={styles.progressBar}
-                                />
+            {/* Achievements Section */}
+            <ThemedView>
+                <Text style={styles.achievementsHeader}>Achievements</Text>
+                <ScrollView style={styles.achievementsPane}>
+                    {hasAchievements ? (
+                        achievements.map((item) => {
+                            const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, parseFloat((item.progress / item.goal).toFixed(2))));
+                            return(
+                                <View key={item.id} style={styles.achievementItem}>
+                                    <Text style={styles.achievementDescription}>{item.description}</Text>
+            
+                                    {/* Progress Bar */}
+                                    <ProgressBar 
+                                        progress={clampedProgress}
+                                        color={getProgressColor(item.progress, item.goal)}
+                                        style={styles.progressBar}
+                                    />
 
-                                {/* Progress Percentage */}
-                                <Text style={styles.progressText}>
-                                    {Math.round(calculateProgress(item.progress, item.goal))}% Complete
-                                </Text>
-                            </View>
-                        );
-                    })
-                ) : (
-                    <Text style={styles.emptyAchievements}>No achievements to display.</Text>
-                )}
-            </ScrollView>
+                                    {/* Progress Percentage */}
+                                    <Text style={styles.progressText}>
+                                        {Math.round(calculateProgress(item.progress, item.goal))}% Complete
+                                    </Text>
+                                </View>
+                            );
+                        })
+                    ) : (
+                        <Text style={styles.emptyAchievements}>No achievements to display.</Text>
+                    )}
+                </ScrollView>
+            </ThemedView>
+        </View>
     );
 }
                
