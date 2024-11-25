@@ -4,16 +4,11 @@ import {Button, View, StyleSheet} from "react-native";
 import { router } from 'expo-router';
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
-import Charts from './charts';
+
 
 export default function HomeScreen() {
 
-    const [waterIntake, setWaterIntake] = useState({
-        totalWaterIntake: 0,
-        consecutiveDays: 0,
-        daysGoalMet: 0,
-        daysLoggedBefore9AM: 0,
-    });
+    const [waterIntake, setWaterIntake] = useState(0);
     const [waterBottles, setWaterBottles] = useState([]);
     const [steps, setSteps] = useState(0);
 
@@ -34,26 +29,13 @@ export default function HomeScreen() {
             console.log("Current Hydration Promise Rejected");
         });
         console.log(hydration);
-        if (hydration[0]?.total_hydration != null) {
-            setWaterIntake(prevData => ({
-                ...prevData,
-                totalWaterIntake: hydration[0].total_hydration,
-            }));
+        if (hydration[0].total_hydration != null) {
+            setWaterIntake(hydration[0].total_hydration);
         }
     }
 
     async function drinkBottle(size: number) {
-        setWaterIntake(prevData => {
-            const updatedData = {
-                ...prevData,
-                totalWaterIntake: prevData.totalWaterIntake + size,
-                // Example: Update goals accordingly based on totalWaterIntake and consecutiveDays
-                daysGoalMet: (prevData.totalWaterIntake + size) >= 100 ? prevData.daysGoalMet + 1 : prevData.daysGoalMet,
-                consecutiveDays: prevData.consecutiveDays + 1, // Example logic for consecutive days
-            };
-            return updatedData;
-        });
-        
+        setWaterIntake(waterIntake+size);
         const db = await SQLite.openDatabaseAsync('hydration.db');
         await db.runAsync(
             `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
@@ -101,7 +83,7 @@ export default function HomeScreen() {
         <>
             <ThemedView style={styles.content}>
                 <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
-                <ThemedText style={styles.intake}>{waterIntake.totalWaterIntake} fl oz</ThemedText>
+                <ThemedText style={styles.intake}>{waterIntake} fl oz</ThemedText>
                 <ThemedText style={styles.saved}>Saved Water Bottles</ThemedText>
                 {
                     waterBottles.map((bottle: {size: number}, index) => (
@@ -116,9 +98,6 @@ export default function HomeScreen() {
                     <Button color={"#5FC1FF"} title={'Add New Bottle'} onPress={addNewBottle}></Button>
                     <Button color={"#5FC1FF"} title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
                 </ThemedView>
-
-                {/* Pass waterIntake to Charts component */}
-                <Charts waterIntakeData={waterIntake} />
             </ThemedView>
         </>
     )
@@ -209,4 +188,3 @@ const styles = StyleSheet.create({
         textAlign: "center",
     }
 });
-
