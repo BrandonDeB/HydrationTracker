@@ -21,13 +21,16 @@ export default function Charts() {
 
     // Sample achievements data with progress tracking
     const [achievements, setAchievements] = useState([
-        {description: "Track water intake for 7 consecutive days.", progress: 5, goal: 7},
-        {description: "Hit your hydration goal 5 times in a week.", progress: 3, goal: 5},
-        {description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
+        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 5, goal: 7},
+        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 3, goal: 5},
+        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
     ]);
 
     // Function to calculate progress percentage
-    const calculateProgress = (progress, goal) => (progress / goal) * 100;
+    const calculateProgress = (progress, goal) => {
+        if (goal === 0) return 0;
+        return (progress / goal) * 100;
+    };
 
     const getProgressColor = (progress, goal) => {
         const percentage = calculateProgress(progress, goal);
@@ -41,9 +44,9 @@ export default function Charts() {
         setAchievements(achievements.filter(item => item.progress < item.goal));
     };
 
-    
+    const hasAchievements = achievements.length > 0;
+
     return (
-        <>
             <ScrollView>
                 <ThemedView style={styles.chart}>
                     <ThemedText style={styles.text}>Weekly Overview</ThemedText>
@@ -61,15 +64,11 @@ export default function Charts() {
 
                 {/* Achievements Section */}
                 <Text style={styles.achievementsHeader}>Achievements</Text>
-                {achievements.length > 0 ? (
-                <FlatList
-                    contentContainerStyle={styles.achievementsPane}
-                    data={achievements}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => (
-                        <View style={styles.achievementItem}>
+                {hasAchievements ? (
+                    achievements.map((item) => (
+                        <View key={item.id} style={styles.achievementItem}>
                             <Text style={styles.achievementDescription}>{item.description}</Text>
-                            
+            
                             {/* Progress Bar */}
                             <ProgressBar 
                                 progress={item.progress / item.goal}
@@ -81,16 +80,19 @@ export default function Charts() {
                             <Text style={styles.progressText}>
                                 {Math.round(calculateProgress(item.progress, item.goal))}% Complete
                             </Text>
-                        </View>
-                    )}
-                />
-            ) : (
-                <Text style={styles.emptyAchievements}>No achievements to display.</Text>
-            )}
+                         </View>
+                    ))
+                ) : (
+                    <Text style={styles.emptyAchievements}>No achievements to display.</Text>
+                )}
 
             {/* Clear Completed Achievements Button */}
-            {achievements.length > 0 && (
-                <TouchableOpacity onPress={filterAchievements} style={styles.clearButton} activeOpacity = {0.8}>
+            {hasAchievements && (
+                <TouchableOpacity 
+                    onPress={filterAchievements} 
+                    style={styles.clearButton} 
+                    activeOpacity = {0.8}
+                >
                     <Text style={styles.clearButtonText}>Clear Completed Achievements</Text>
                 </TouchableOpacity>
             )}
