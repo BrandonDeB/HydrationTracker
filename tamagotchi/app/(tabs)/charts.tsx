@@ -33,6 +33,7 @@ export default function Charts() {
     };
 
     const getProgressColor = (progress, goal) => {
+        if (goal === 0) return "#F44336";
         const percentage = calculateProgress(progress, goal);
         if (percentage > 75) return "#4CAF50"; // Green
         if (percentage > 50) return "#FFC107"; // Yellow
@@ -44,7 +45,7 @@ export default function Charts() {
         setAchievements(achievements.filter(item => item.progress < item.goal));
     };
 
-    const hasAchievements = achievements.length > 0;
+    const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
 
     return (
             <ScrollView>
@@ -66,7 +67,7 @@ export default function Charts() {
                 <Text style={styles.achievementsHeader}>Achievements</Text>
                 {hasAchievements ? (
                     achievements.map((item) => {
-                        const clampedProgress = Math.min(1, Math.max(0, item.progress / item.goal));
+                        const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, item.progress / item.goal));
                         return(
                             <View key={item.id} style={styles.achievementItem}>
                                 <Text style={styles.achievementDescription}>{item.description}</Text>
