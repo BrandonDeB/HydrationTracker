@@ -88,6 +88,8 @@ export default function Charts({waterIntakeData}) {
                     {hasAchievements ? (
                         achievements.map((item) => {
                             const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, parseFloat((item.progress / item.goal).toFixed(2))));
+                            const progressPercentage = calculateProgress(item.progress, item.goal);
+
                             return(
                                 <View key={item.id} style={styles.achievementItem}>
                                     <Text style={styles.achievementDescription}>{item.description}</Text>
@@ -101,7 +103,7 @@ export default function Charts({waterIntakeData}) {
 
                                     {/* Progress Percentage */}
                                     <Text style={styles.progressText}>
-                                        {Math.round(calculateProgress(item.progress, item.goal))}% Complete
+                                        {progressPercentage}% Complete
                                     </Text>
                                 </View>
                             );
