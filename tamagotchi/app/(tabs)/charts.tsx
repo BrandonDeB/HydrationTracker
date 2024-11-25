@@ -1,8 +1,9 @@
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import React, {useState} from "react";
 import { BarChart } from "react-native-gifted-charts";
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
+import { ProgressBar } from 'react-native-paper';
 
 export default function Charts() {
 
@@ -18,7 +19,22 @@ export default function Charts() {
         {value: 300, label: 'S'},
     ];
 
+    // Sample achievements data with progress tracking
+    const [achievements, setAchievements] = useState([
+        {description: "Track water intake for 7 consecutive days.", progress: 5, goal: 7},
+        {description: "Hit your hydration goal 5 times in a week.", progress: 3, goal: 5},
+        {description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
+    ]);
 
+    // Function to calculate progress percentage
+    const calculateProgress = (progress, goal) => (progress / goal) * 100;
+
+    // Function to remove completed achievements
+    const filterAchievements = () => {
+        setAchievements(achievements.filter(item => item.progress < item.goal));
+    };
+
+    
     return (
         <>
             <ScrollView>
@@ -35,11 +51,44 @@ export default function Charts() {
                         xAxisThickness={0}
                     />
                 </ThemedView>
-                <ThemedText style={styles.achievements}>Achievements</ThemedText>
+
+                {/* Achievements Section */}
+                <ThemedText style={styles.achievementsHeader}>Achievements</ThemedText>
+                <View style={styles.achievementsPane}>
+                    {achievements.map((achievement, index) => (
+                        <View key={index} style={styles.achievementItem}>
+                            {/* Description */}
+                            <Text style={styles.achievementDescription}>{achievement.description}</Text>
+                            
+                            {/* Progress Bar */}
+                            <ProgressBar 
+                                progress={achievement.progress / achievement.goal} 
+                                color="#5FC1FF" 
+                                style={styles.progressBar}
+                            />
+
+                            {/* Progress Percentage */}
+                            <Text style={styles.progressText}>
+                                {Math.round(calculateProgress(achievement.progress, achievement.goal))}% Complete
+                            </Text>
+                        </View>
+                    ))}
+                </View>
+
+                {/* Filter out completed achievements */}
+                {achievements.length > 0 && (
+                    <ThemedText 
+                        style={styles.clearCompletedButton} 
+                        onPress={filterAchievements}
+                    >
+                        Clear Completed Achievements
+                    </ThemedText>
+                )}
             </ScrollView>
         </>
     );
 }
+               
 
 const styles = StyleSheet.create({
     topBar: {
@@ -72,10 +121,43 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         borderRadius: 4,
     },
-    achievements: {
+    achievementsHeader: {
         fontSize: 24,
         marginTop: 24,
         backgroundColor: "#5FC1FF",
-        width: "100%"
+        textAlign: "center",
+        padding: 8,
+        color: "#ffffff"
+    },
+    achievementsPane: {
+        padding: 16,
+    },
+    achievementItem: {
+        backgroundColor: "#e3f2fd",
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 16,
+    },
+    achievementDescription: {
+        fontSize: 16,
+        marginBottom: 8,
+        color: "#455a64"
+    },
+    progressBar: {
+        height: 10,
+        borderRadius: 5,
+        marginBottom: 8,
+    },
+    progressText: {
+        fontSize: 14,
+        color: "#0d47a1",
+        textAlign: "right",
+    },
+    clearCompletedButton: {
+        fontSize: 16,
+        color: "#d32f2f",
+        textAlign: "center",
+        marginTop: 16,
+        textDecorationLine: "underline",
     }
 });
