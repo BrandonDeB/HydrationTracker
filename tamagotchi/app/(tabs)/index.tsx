@@ -8,7 +8,7 @@ import Charts from './Charts';
 
 export default function HomeScreen() {
 
-    const [waterIntake, setWaterIntake] useState({
+    const [waterIntake, setWaterIntake] = useState({
         totalWaterIntake: 0,
         consecutiveDays: 0,
         daysGoalMet: 0,
