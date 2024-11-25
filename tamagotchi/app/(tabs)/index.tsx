@@ -8,7 +8,12 @@ import Charts from './Charts';
 
 export default function HomeScreen() {
 
-    const [waterIntake, setWaterIntake] = useState(0);
+    const [waterIntake, setWaterIntake] useState({
+        totalWaterIntake: 0,
+        consecutiveDays: 0,
+        daysGoalMet: 0,
+        daysLoggedBefore9AM: 0,
+    });
     const [waterBottles, setWaterBottles] = useState([]);
     const [steps, setSteps] = useState(0);
 
@@ -29,13 +34,26 @@ export default function HomeScreen() {
             console.log("Current Hydration Promise Rejected");
         });
         console.log(hydration);
-        if (hydration[0].total_hydration != null) {
-            setWaterIntake(hydration[0].total_hydration);
+        if (hydration[0]?.total_hydration != null) {
+            setWaterIntake(prevData => ({
+                ...prevData,
+                totalWaterIntake: hydration[0].total_hydration,
+            }));
         }
     }
 
     async function drinkBottle(size: number) {
-        setWaterIntake(waterIntake+size);
+        setWaterIntake(prevData => {
+            const updatedData = {
+                ...prevData,
+                totalWaterIntake: prevData.totalWaterIntake + size,
+                // Example: Update goals accordingly based on totalWaterIntake and consecutiveDays
+                daysGoalMet: (prevData.totalWaterIntake + size) >= 100 ? prevData.daysGoalMet + 1 : prevData.daysGoalMet,
+                consecutiveDays: prevData.consecutiveDays + 1, // Example logic for consecutive days
+            };
+            return updatedData;
+        });
+        
         const db = await SQLite.openDatabaseAsync('hydration.db');
         await db.runAsync(
             `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
@@ -98,6 +116,9 @@ export default function HomeScreen() {
                     <Button color={"#5FC1FF"} title={'Add New Bottle'} onPress={addNewBottle}></Button>
                     <Button color={"#5FC1FF"} title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
                 </ThemedView>
+
+                {/* Pass waterIntake to Charts component */}
+                <Charts waterIntakeData={waterIntake} />
             </ThemedView>
         </>
     )
