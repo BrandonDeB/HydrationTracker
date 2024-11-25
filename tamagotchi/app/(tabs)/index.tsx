@@ -4,7 +4,7 @@ import {Button, View, StyleSheet} from "react-native";
 import { router } from 'expo-router';
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
-
+import Charts from './Charts';
 
 export default function HomeScreen() {
 
