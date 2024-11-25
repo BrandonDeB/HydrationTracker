@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     progressBar: {
         height: 20,
         borderRadius: 5,
-        marginBottom: 8,
+        marginBottom: 2,
     },
     progressText: {
         fontSize: 16,
