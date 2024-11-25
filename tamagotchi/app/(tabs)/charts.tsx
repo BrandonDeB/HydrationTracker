@@ -1,5 +1,5 @@
-import {StyleSheet, ScrollView, View, Text, FlatList, useEffect} from 'react-native';
-import React, {useState} from "react";
+import {StyleSheet, ScrollView, View, Text, FlatList} from 'react-native';
+import React, {useState, useEffect} from "react";
 import { BarChart } from "react-native-gifted-charts";
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
@@ -46,7 +46,7 @@ export default function Charts() {
     };
 
     // Automatically remove completed achievements
-    useEffect(() => {
+    const useEffect(() => {
         setAchievements(achievements.filter(item => item.progress < item.goal));
     }, [achievements]);
     
