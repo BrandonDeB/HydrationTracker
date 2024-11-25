@@ -45,24 +45,29 @@ export default function Charts() {
         setAchievements(achievements.filter(item => item.progress < item.goal));
     };
 
+    // Automatically remove completed achievements
+    useEffect(() => {
+        setAchievements(achievements.filter(item => item.progress < item.goal));
+    }, [achievements]);
+    
     const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
 
     return (
+            
+            <ThemedView style={styles.chart}>
+                <ThemedText style={styles.text}>Weekly Overview</ThemedText>
+                <ThemedText style={styles.week}>{week}</ThemedText>
+                <BarChart
+                    barWidth={22}
+                    noOfSections={3}
+                    barBorderRadius={4}
+                    frontColor="lightgray"
+                    data={barData}
+                    yAxisThickness={0}
+                    xAxisThickness={0}
+                />
+            </ThemedView>
             <ScrollView>
-                <ThemedView style={styles.chart}>
-                    <ThemedText style={styles.text}>Weekly Overview</ThemedText>
-                    <ThemedText style={styles.week}>{week}</ThemedText>
-                    <BarChart
-                        barWidth={22}
-                        noOfSections={3}
-                        barBorderRadius={4}
-                        frontColor="lightgray"
-                        data={barData}
-                        yAxisThickness={0}
-                        xAxisThickness={0}
-                    />
-                </ThemedView>
-
                 {/* Achievements Section */}
                 <Text style={styles.achievementsHeader}>Achievements</Text>
                 {hasAchievements ? (
@@ -89,18 +94,7 @@ export default function Charts() {
                 ) : (
                     <Text style={styles.emptyAchievements}>No achievements to display.</Text>
                 )}
-
-            {/* Clear Completed Achievements Button */}
-            {hasAchievements && (
-                <TouchableOpacity 
-                    onPress={filterAchievements} 
-                    style={styles.clearButton} 
-                    activeOpacity = {0.8}
-                >
-                    <Text style={styles.clearButtonText}>Clear Completed Achievements</Text>
-                </TouchableOpacity>
-            )}
-        </ScrollView>
+            </ScrollView>
     );
 }
                
@@ -172,17 +166,5 @@ const styles = StyleSheet.create({
         color: "#888",
         marginVertical: 24,
         fontSize: 16,
-    },
-    clearButton: {
-        alignSelf: "center",
-        backgroundColor: "#d32f2f",
-        padding: 10,
-        borderRadius: 8,
-        marginTop: 16,
-    },
-    clearButtonText: {
-        color: "#ffffff",
-        fontSize: 16,
-        textAlign: "center",
     },
 });
