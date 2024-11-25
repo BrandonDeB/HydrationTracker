@@ -5,10 +5,16 @@ import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import { ProgressBar } from 'react-native-paper';
 
-export default function Charts() {
+export default function Charts({waterIntakeData}) {
 
     const [week, setWeek] = useState("Nov 11 - Nov 17");
 
+    const [achievements, setAchievements] = useState([
+        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 0, goal: 7},
+        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 0, goal: 5},
+        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 0, goal: 3},
+    ]);
+    
     const barData = [
         {value: 250, label: 'M'},
         {value: 500, label: 'T', frontColor: '#5FC1FF'},
@@ -19,12 +25,29 @@ export default function Charts() {
         {value: 300, label: 'S'},
     ];
 
-    // Sample achievements data with progress tracking
-    const [achievements, setAchievements] = useState([
-        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 6, goal: 7},
-        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 1, goal: 5},
-        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
-    ]);
+    // Update achievements based on actual user tracking data
+    useEffect(() => {
+        if (waterIntakeData) {
+            setAchievements(prevAchievements => prevAchievements.map(item => {
+                let newProgress = item.progress;
+
+                // Update progress based on the achievement type
+                if (item.id === 1) {
+                    // Track water intake for 7 consecutive days
+                    newProgress = Math.min(item.goal, waterIntakeData.consecutiveDays);
+                } else if (item.id === 2) {
+                    // Hit hydration goal 5 times in a week
+                    newProgress = Math.min(item.goal, waterIntakeData.daysGoalMet);
+                } else if (item.id === 3) {
+                    // Log water before 9 AM for 3 days in a row
+                    newProgress = Math.min(item.goal, waterIntakeData.daysLoggedBefore9AM);
+                }
+
+                return {...item, progress: newProgress};
+            }));
+        }
+    }, [waterIntakeData]);
+
 
     // Function to calculate progress percentage
     const calculateProgress = (progress, goal) => {
@@ -39,11 +62,6 @@ export default function Charts() {
         if (percentage > 50) return "#FFC107"; // Yellow
         return "#F44336"; // Red
     };
-
-    // Automatically remove completed achievements
-    useEffect(() => {
-        setAchievements(prevAchievements => prevAchievements.filter(item => item.progress < item.goal));
-    }, []);
     
     const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
 
@@ -137,6 +155,7 @@ const styles = StyleSheet.create({
         color: "#ffffff",
     },
     achievementsPane: {
+        maxHeight: 300,
         padding: 16,
     },
     achievementItem: {
@@ -144,6 +163,11 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 16,
         marginBottom: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
     },
     achievementDescription: {
         fontSize: 16,
