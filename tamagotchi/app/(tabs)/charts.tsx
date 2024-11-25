@@ -46,7 +46,7 @@ export default function Charts() {
     };
 
     // Automatically remove completed achievements
-    const useEffect(() => {
+    useEffect(() => {
         setAchievements(achievements.filter(item => item.progress < item.goal));
     }, [achievements]);
     
