@@ -1,4 +1,4 @@
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, FlatList, TouchableOpacity} from 'react-native';
 import React, {useState} from "react";
 import { BarChart } from "react-native-gifted-charts";
 import {ThemedView} from "@/components/ThemedView";
@@ -29,6 +29,13 @@ export default function Charts() {
     // Function to calculate progress percentage
     const calculateProgress = (progress, goal) => (progress / goal) * 100;
 
+    const getProgressColor = (progress, goal) => {
+        const percentage = calculateProgress(progress, goal);
+        if (percentage > 75) return "#4CAF50"; // Green
+        if (percentage > 50) return "#FFC107"; // Yellow
+        return "#F44336"; // Red
+    };
+
     // Function to remove completed achievements
     const filterAchievements = () => {
         setAchievements(achievements.filter(item => item.progress < item.goal));
@@ -53,43 +60,44 @@ export default function Charts() {
                 </ThemedView>
 
                 {/* Achievements Section */}
-                <ThemedText style={styles.achievementsHeader}>Achievements</ThemedText>
-                <View style={styles.achievementsPane}>
-                    {achievements.map((achievement, index) => (
-                        <View key={index} style={styles.achievementItem}>
-                            {/* Description */}
-                            <Text style={styles.achievementDescription}>{achievement.description}</Text>
+                <Text style={styles.achievementsHeader}>Achievements</Text>
+                {achievements.length > 0 ? (
+                <FlatList
+                    contentContainerStyle={styles.achievementsPane}
+                    data={achievements}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({item}) => (
+                        <View style={styles.achievementItem}>
+                            <Text style={styles.achievementDescription}>{item.description}</Text>
                             
                             {/* Progress Bar */}
                             <ProgressBar 
-                                progress={achievement.progress / achievement.goal} 
-                                color="#5FC1FF" 
+                                progress={item.progress / item.goal}
+                                color={getProgressColor(item.progress, item.goal)}
                                 style={styles.progressBar}
                             />
 
                             {/* Progress Percentage */}
                             <Text style={styles.progressText}>
-                                {Math.round(calculateProgress(achievement.progress, achievement.goal))}% Complete
+                                {Math.round(calculateProgress(item.progress, item.goal))}% Complete
                             </Text>
                         </View>
-                    ))}
-                </View>
+                    )}
+                />
+            ) : (
+                <Text style={styles.emptyAchievements}>No achievements to display.</Text>
+            )}
 
-                {/* Filter out completed achievements */}
-                {achievements.length > 0 && (
-                    <ThemedText 
-                        style={styles.clearCompletedButton} 
-                        onPress={filterAchievements}
-                    >
-                        Clear Completed Achievements
-                    </ThemedText>
-                )}
-            </ScrollView>
-        </>
+            {/* Clear Completed Achievements Button */}
+            {achievements.length > 0 && (
+                <TouchableOpacity onPress={filterAchievements} style={styles.clearButton} activeOpacity = {0.8}>
+                    <Text style={styles.clearButtonText}>Clear Completed Achievements</Text>
+                </TouchableOpacity>
+            )}
+        </ScrollView>
     );
 }
                
-
 const styles = StyleSheet.create({
     topBar: {
         flexDirection: "row",
@@ -153,11 +161,22 @@ const styles = StyleSheet.create({
         color: "#0d47a1",
         textAlign: "right",
     },
-    clearCompletedButton: {
-        fontSize: 16,
-        color: "#d32f2f",
+    emptyAchievements: {
         textAlign: "center",
+        color: "#888",
+        marginVertical: 24,
+        fontSize: 16,
+    },
+    clearButton: {
+        alignSelf: "center",
+        backgroundColor: "#d32f2f",
+        padding: 10,
+        borderRadius: 8,
         marginTop: 16,
-        textDecorationLine: "underline",
-    }
+    },
+    clearButtonText: {
+        color: "#ffffff",
+        fontSize: 16,
+        textAlign: "center",
+    },
 });
