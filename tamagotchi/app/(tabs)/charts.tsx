@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     achievementItem: {
         backgroundColor: "#cbe7fb",
         borderRadius: 8,
-        padding: 16,
-        marginBottom: 8,
+        padding: 10,
+        marginBottom: 16,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
