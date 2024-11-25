@@ -5,17 +5,10 @@ import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import { ProgressBar } from 'react-native-paper';
 
-export default function Charts({waterIntakeData}) {   
-    
+export default function Charts() {
+
     const [week, setWeek] = useState("Nov 11 - Nov 17");
 
-    const [achievements, setAchievements] = useState([
-        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 0, goal: 7},
-        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 0, goal: 5},
-        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 0, goal: 3},
-        {id: 4, description: "Drink a total of 100 fl oz in a day.", progress: 0, goal: 100},
-    ]);
-    
     const barData = [
         {value: 250, label: 'M'},
         {value: 500, label: 'T', frontColor: '#5FC1FF'},
@@ -26,34 +19,12 @@ export default function Charts({waterIntakeData}) {
         {value: 300, label: 'S'},
     ];
 
-    // Update achievements based on actual user tracking data w waterIntakeData prop
-    useEffect(() => {
-        if (waterIntakeData !== undefined && waterIntakeData !== null) {
-            setAchievements(prevAchievements => prevAchievements.map(item => {
-                let newProgress = item.progress;
-
-                // Update progress based on the achievement type
-                if (item.id === 1 && typeof waterIntakeData.consecutiveDays === 'number') {
-                    // Track water intake for 7 consecutive days
-                    newProgress = Math.min(item.goal, waterIntakeData.consecutiveDays);
-                } else if (item.id === 2 && typeof waterIntakeData.daysGoalMet === 'number') {
-                    // Hit hydration goal 5 times in a week
-                    newProgress = Math.min(item.goal, waterIntakeData.daysGoalMet);
-                } else if (item.id === 3 && typeof waterIntakeData.daysLoggedBefore9AM === 'number') {
-                    // Log water before 9 AM for 3 days in a row
-                    newProgress = Math.min(item.goal, waterIntakeData.daysLoggedBefore9AM);
-                } else if (item.id === 4 && typeof waterIntakeData.totalWaterIntake === 'number') {
-                    // Drink a total of 100 fl oz in a day
-                    newProgress = Math.min(item.goal, waterIntakeData.totalWaterIntake);
-                }
-
-                // Ensure newProgress is a valid number, otherwise set to 0
-                newProgress = isNaN(newProgress) ? 0 : newProgress;
-
-                return {...item, progress: newProgress};
-            }));
-        }
-    }, [waterIntakeData]);
+    // Sample achievements data with progress tracking
+    const [achievements, setAchievements] = useState([
+        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 6, goal: 7},
+        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 1, goal: 5},
+        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
+    ]);
 
     // Function to calculate progress percentage
     const calculateProgress = (progress, goal) => {
@@ -68,6 +39,11 @@ export default function Charts({waterIntakeData}) {
         if (percentage > 50) return "#FFC107"; // Yellow
         return "#F44336"; // Red
     };
+
+    // Automatically remove completed achievements
+    useEffect(() => {
+        setAchievements(prevAchievements => prevAchievements.filter(item => item.progress < item.goal));
+    }, []);
     
     const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
 
@@ -94,8 +70,6 @@ export default function Charts({waterIntakeData}) {
                     {hasAchievements ? (
                         achievements.map((item) => {
                             const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, parseFloat((item.progress / item.goal).toFixed(2))));
-                            const progressPercentage = calculateProgress(item.progress, item.goal);
-
                             return(
                                 <View key={item.id} style={styles.achievementItem}>
                                     <Text style={styles.achievementDescription}>{item.description}</Text>
@@ -109,7 +83,7 @@ export default function Charts({waterIntakeData}) {
 
                                     {/* Progress Percentage */}
                                     <Text style={styles.progressText}>
-                                        {progressPercentage}% Complete
+                                        {Math.round(calculateProgress(item.progress, item.goal))}% Complete
                                     </Text>
                                 </View>
                             );
@@ -163,7 +137,6 @@ const styles = StyleSheet.create({
         color: "#ffffff",
     },
     achievementsPane: {
-        maxHeight: 300,
         padding: 16,
     },
     achievementItem: {
@@ -171,11 +144,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 16,
         marginBottom: 16,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
     },
     achievementDescription: {
         fontSize: 16,
