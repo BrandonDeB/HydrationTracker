@@ -151,17 +151,17 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     achievementDescription: {
-        fontSize: 16,
+        fontSize: 20,
         marginBottom: 8,
         color: "#455a64",
     },
     progressBar: {
-        height: 10,
+        height: 20,
         borderRadius: 5,
         marginBottom: 8,
     },
     progressText: {
-        fontSize: 14,
+        fontSize: 16,
         color: "#0d47a1",
         textAlign: "right",
     },
