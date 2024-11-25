@@ -21,8 +21,8 @@ export default function Charts() {
 
     // Sample achievements data with progress tracking
     const [achievements, setAchievements] = useState([
-        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 5, goal: 7},
-        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 3, goal: 5},
+        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 1, goal: 7},
+        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 4, goal: 5},
         {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
     ]);
 
