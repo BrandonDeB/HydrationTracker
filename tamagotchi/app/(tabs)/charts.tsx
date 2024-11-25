@@ -33,24 +33,27 @@ export default function Charts({waterIntakeData}) {
                 let newProgress = item.progress;
 
                 // Update progress based on the achievement type
-                if (item.id === 1) {
+                if (item.id === 1 && typeof waterIntakeData.consecutiveDays === 'number') {
                     // Track water intake for 7 consecutive days
                     newProgress = Math.min(item.goal, waterIntakeData.consecutiveDays);
-                } else if (item.id === 2) {
+                } else if (item.id === 2 && typeof waterIntakeData.daysGoalMet === 'number') {
                     // Hit hydration goal 5 times in a week
                     newProgress = Math.min(item.goal, waterIntakeData.daysGoalMet);
-                } else if (item.id === 3) {
+                } else if (item.id === 3 && typeof waterIntakeData.daysLoggedBefore9AM === 'number') {
                     // Log water before 9 AM for 3 days in a row
                     newProgress = Math.min(item.goal, waterIntakeData.daysLoggedBefore9AM);
-                } else if (item.id === 4) {
+                } else if (item.id === 4 && typeof waterIntakeData.totalWaterIntake === 'number') {
                     // Drink a total of 100 fl oz in a day
-                    newProgress = Math.min(item.goal, waterIntakeData);
+                    newProgress = Math.min(item.goal, waterIntakeData.totalWaterIntake);
                 }
+
+                // Ensure newProgress is a valid number, otherwise set to 0
+                newProgress = isNaN(newProgress) ? 0 : newProgress;
+
                 return {...item, progress: newProgress};
             }));
         }
     }, [waterIntakeData]);
-
 
     // Function to calculate progress percentage
     const calculateProgress = (progress, goal) => {
