@@ -25,9 +25,9 @@ export default function CustomAmount () {
             `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
             [steps, size]
         ).catch(function () {
-            console.log("Bottle Add Promise Rejected");
+            console.log("Custom Amount Failed");
         });
-        router.replace('/(tabs)')
+        router.replace('/(tabs)');
     }
 
     return (
