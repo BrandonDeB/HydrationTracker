@@ -40,17 +40,6 @@ export default function Shop() {
         setHats(hats);
     }
 
-    async function playSound() {
-        console.log('Loading Sound');
-        const { sound } = await Audio.Sound.createAsync(
-            require('../../assets/SHOP_THEME.mp3')
-        );
-        setSound(sound);
-
-        console.log('Playing Sound');
-        await sound.playAsync();
-    }
-
     async function loadCoins() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
         const coins: { coins: number } | null = await db.getFirstAsync('SELECT coins FROM user');
