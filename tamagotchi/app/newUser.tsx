@@ -1,21 +1,22 @@
-import {
-    Text,
-    RadioGroup,
-    RadioButton,
-    TextField,
-    WheelPicker,
-    WheelPickerProps,
-    NumberInput
-} from 'react-native-ui-lib';
-import {Component, useMemo, useState} from "react";
-import { ThemedView } from '@/components/ThemedView';
-import {Button, StyleSheet} from "react-native";
-import {ThemedText} from "@/components/ThemedText";
+import {StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Button} from 'react-native';
+import React, { useState } from 'react';
+import HydrationBar from "@/components/HydrationBar";
+import { ThemedView } from "@/components/ThemedView";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {router, useNavigation} from "expo-router";
 import * as SQLite from "expo-sqlite";
-import { router } from 'expo-router';
+import { TextInput } from 'react-native-paper';
+import ColorDropdown from "@/components/colorDropDown";
+import OwnerInfo from "@/components/ownerInfo";
 
-export default function NewUser () {
+export default function NewUser() {
+    type FrogColor = "green" | "blue" | "red";
 
+    const navigation = useNavigation();
+
+    const [text, setChangeText] = React.useState('');
+    const [number, onChangeNumber] = React.useState('');
+    const [selectedColor, setSelectedColor] = useState<FrogColor>("green");
     const [name, setName] = useState("");
     const [feet, setFeet] = useState(0);
     const [weight, setWeight] = useState(0);
@@ -39,61 +40,183 @@ export default function NewUser () {
 
     }
 
-        const FEETCONST = [...Array(8).keys()];
-        const INCHESCONST = [...Array(12).keys()];
+    const frogImage: { [key in FrogColor]: any } = {
+        green: require('@/drawings/frog1.jpg'),
+        blue: require('@/drawings/frog2.jpg'),
+        red: require('@/drawings/frog3.jpg'),
+    };
 
-        const feetMap = FEETCONST.map(item => ({label: item.toString(), value: item}));
-        const inchesMap = INCHESCONST.map(item => ({label: item.toString(), value: item}));
+    const handleColorChange = (color: FrogColor) => {
+        setSelectedColor(color);
+    };
 
-        return (
+    const handleSelect = (value: string | null) => {
+        console.log('Selected Value:', value);
+    };
 
-            <>
-                <ThemedView style={styles.content}>
-                    <TextField style={styles.text} placeholder={'Input Name'}  onChangeText={(value: any) => setName(value)}/>
-                    <RadioGroup initialValue={"Unspecified"} onValueChange={(value: any) => setGender(value)}>
-                        <Text text60 $textDefault>
-                            Sex
-                        </Text>
-                        <RadioButton value={"M"} label={"Male"}/>
-                        <RadioButton value={"F"} label={"Female"}/>
-                        <RadioButton value={"U"} label={"Unspecified"}/>
-                    </RadioGroup>
-                    <Text text60 $textDefault>
-                        Height
-                    </Text>
-                    <ThemedView style={styles.heightSelect}>
-                        <WheelPicker label={"Feet"} items={feetMap}  initialValue={0}  onChange={(value: any) => setFeet(value)}/>
-                        <WheelPicker  label={"Inches"} items={inchesMap}  initialValue={0}  onChange={(value: any) => setInches(value)}/>
-                    </ThemedView>
-                    <Text text60 $textDefault>
-                        Weight
-                    </Text>
-                    <NumberInput textFieldProps={{style: styles.text}} containerStyle={styles.content} onChangeNumber={(weightValue) => setWeight(Number(weightValue.userInput))} fractionDigits={0} />
-                    <Button title="Submit" onPress={submitPress} color="#841584" />
-                </ThemedView>
-            </>
-        );
+    return (
+
+        <ScrollView style={{ flex: 1 }}>
+
+            <View style={styles.container}>
+                <View style={styles.idHolder}></View>
+                <View style={styles.idContainer}>
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={frogImage[selectedColor]}
+                            style={styles.frogImage}
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <View style={styles.frogOptions}>
+                        <TextInput
+                            style={styles.input}
+                            mode="outlined"
+                            label="Name:"
+                            placeholder="name frog"
+                            right={<TextInput.Affix />}
+                        />
+                    </View>
+
+                    <View style={styles.buttonsContainer}>
+                        <ColorDropdown
+                            onSelect={(value) => {
+                                if (value === "green") handleColorChange("green");
+                                else if (value === "blue") handleColorChange("blue");
+                                else if (value === "red") handleColorChange("red");
+                            }}
+                        />
+
+                        <TextInput
+                            style={styles.inputOwner}
+                            mode="outlined"
+                            label="Owner's Name:"
+                            placeholder="type yo name"
+                            right={<TextInput.Affix />}
+                            onChangeText={(value: any) => setName(value)}
+                        />
+                    </View>
+                </View>
+
+                <View style={styles.ownerInfo}>
+                    <OwnerInfo />
+                </View>
+
+                {/* Hydration Goal Section at the Bottom */}
+                <View style={styles.hydroGoal}>
+                    <View style={styles.hydroCard}>
+                        <TextInput
+                            style={styles.hydro}
+                            mode="outlined"
+                            label="Hydration Goal"
+                            placeholder="Enter your hydration goal"
+                            right={<TextInput.Affix />}
+                        />
+                    </View>
+                </View>
+            </View>
+            <Button title="Submit" onPress={submitPress} color="#841584" />
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
-    text: {
-        fontSize: 28,
-        marginLeft: -16,
+    topBar: {
+        flexDirection: "row",
+        alignSelf: "center",
+        margin: 50,
+        padding: 10,
+        justifyContent: "space-between",
+        backgroundColor: "rgba(76, 175, 80, 0.0)",
     },
     container: {
         flex: 1,
+        alignItems: 'center',
     },
-    header: {
-        height: 250,
-        overflow: 'hidden',
+    heading: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
-    content: {
-        flex: 1,
-        padding: 32,
-        gap: 16,
-        overflow: 'hidden',
+    buttonsContainer: {
+        marginBottom: 20,
+        top: '-10%',
     },
-    heightSelect: {
+    button: {
+        fontSize: 18,
+        margin: 10,
+        padding: 10,
+        backgroundColor: '#5FC1FF',
+        borderRadius: 5,
+        color: 'white',
+    },
+    idContainer: {
+        backgroundColor: 'white',
+        marginTop: "25%",
+        borderColor: '#5FC1FF',
+        borderWidth: 5,
+        borderRadius: 20,
+        width: '90%',
+        height: '45%',
+    },
+    imageContainer: {
+        alignItems: 'flex-start',
+    },
+    frogImage: {
+        marginLeft: '10%',
+        marginTop: '10%',
+        width: 100,
+        height: 100,
+    },
+    frogOptions: {
+        alignSelf: 'flex-end',
+        top: "-30%",
+        marginRight: "10%",
         flexDirection: 'row',
+    },
+    input: {
+        marginLeft: '4%',
+        fontSize: 16,
+        width: '50%',
+    },
+    inputOwner: {
+        width: '80%',
+        alignSelf: 'center',
+    },
+    idHolder: {
+        height: '5%',
+        width: '8%',
+        borderRadius: 5,
+        backgroundColor: '#5FC1FF',
+        top: '15.5%',
+        zIndex: 999,
+    },
+    ownerInfo: {
+        top: '-5%',
+        width: '100%',
+        height: '80%',
+        alignItems: 'center',
+    },
+    hydroGoal: {
+        position: 'absolute',
+        bottom: '-20%', // Adjust the bottom spacing if needed
+        width: '90%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    hydroCard: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        borderColor: '#5FC1FF',
+        borderWidth: 2,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+    },
+    hydro: {
+        fontSize: 16,
     },
 });
