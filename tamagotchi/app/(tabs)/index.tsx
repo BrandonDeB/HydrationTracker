@@ -121,7 +121,7 @@ async function migrateDbIfNeeded() {
         await db.runAsync(
             `INSERT INTO user (name, height, weight, gender, coins)
              VALUES (?, ?, ?, ?, ?);`,
-            ["null", 0, 0, "U", 0]
+            ["null", 0, 0, "U", 1000]
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
