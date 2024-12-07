@@ -110,7 +110,7 @@ async function migrateDbIfNeeded() {
     const db = await SQLite.openDatabaseAsync('hydration.db');
     await db.execAsync(`
         CREATE TABLE IF NOT EXISTS records (time TIMESTAMP(20) DEFAULT CURRENT_TIMESTAMP NOT NULL, steps INT(20),hydration INT(20),PRIMARY KEY(time));
-        CREATE TABLE IF NOT EXISTS user (name TEXT(20),height INT(20),weight INT(20),gender CHAR(1),coins INT(20), PRIMARY KEY(name));
+        CREATE TABLE IF NOT EXISTS user (name TEXT(20),height INT(20),weight INT(20),gender CHAR(1),coins INT(20), frogName TEXT(20), frogColor TEXT(20), PRIMARY KEY(name));
         CREATE TABLE IF NOT EXISTS bottles (size INT(20), PRIMARY KEY (size));
         CREATE TABLE IF NOT EXISTS hats (hatId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, filePath TEXT, price INTEGER, purchased BOOLEAN DEFAULT 0);
     `).catch(function () {
@@ -119,9 +119,9 @@ async function migrateDbIfNeeded() {
     const name: { name: string } | null = await db.getFirstAsync('SELECT name FROM user');
     if (name == null) {
         await db.runAsync(
-            `INSERT INTO user (name, height, weight, gender, coins)
-             VALUES (?, ?, ?, ?, ?);`,
-            ["null", 0, 0, "U", 1000]
+            `INSERT INTO user (name, height, weight, gender, coins, frogName, frogColor)
+             VALUES (?, ?, ?, ?, ?, ?, ?);`,
+            ["null", 0, 0, "U", 1000, "null", "green"]
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });

@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import HydrationBar from "@/components/HydrationBar";
 import { ThemedView } from "@/components/ThemedView";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -11,11 +11,24 @@ export default function Tamagotchi() {
 
     const [selectedColor, setSelectedColor] = useState<FrogColor>("green");
 
+    async function getFrogColor() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const color: { frogColor: "green" | "blue" | "red" } | null = await db.getFirstAsync('SELECT frogColor FROM user');
+        console.log(color);
+        if (color != null) {
+            setSelectedColor(color.frogColor);
+        }
+    }
+
+    useEffect(() => {
+        getFrogColor();
+    }, []);
+
 
     const frogImage: { [key in FrogColor]: any } = {
-        green: require('@/drawings/frog1.jpg'),
-        blue: require('@/drawings/frog2.jpg'),
-        red: require('@/drawings/frog3.jpg'),
+        green: require('../../assets/drawings/frog1.jpg'),
+        blue: require('../../assets/drawings/frog2.jpg'),
+        red: require('../../assets/drawings/frog3.jpg'),
     };
 
     // Function to handle color change
@@ -34,21 +47,6 @@ export default function Tamagotchi() {
             </ThemedView>
 
             <View style={styles.container}>
-                <Text>Choose Your Frog Color</Text>
-
-                {/* Buttons to select frog color */}
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity onPress={() => handleColorChange("green")}>
-                        <Text style={styles.button}>Green</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleColorChange("blue")}>
-                        <Text style={styles.button}>Blue</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleColorChange("red")}>
-                        <Text style={styles.button}>red</Text>
-                    </TouchableOpacity>
-                </View>
-
                 <View style={styles.imageContainer}>
                     <Image
                         source={frogImage[selectedColor]}
