@@ -75,6 +75,7 @@ export default function HomeScreen() {
             // db.execSync('DROP TABLE user');
             // db.execSync('DROP TABLE records');
             // db.execSync('DROP TABLE bottles');
+            // db.execSync('DROP TABLE hats');
         }
         setup();
     }, []);
@@ -104,12 +105,14 @@ export default function HomeScreen() {
 }
 
 async function migrateDbIfNeeded() {
+    const hat_names = ["Cowboy Hat", "Afro", "Crown", "Strawberry", "Propeller Cap", "Backwards Cap", "Little Frog"]
     console.log("Migrating DB");
     const db = await SQLite.openDatabaseAsync('hydration.db');
     await db.execAsync(`
         CREATE TABLE IF NOT EXISTS records (time TIMESTAMP(20) DEFAULT CURRENT_TIMESTAMP NOT NULL, steps INT(20),hydration INT(20),PRIMARY KEY(time));
         CREATE TABLE IF NOT EXISTS user (name TEXT(20),height INT(20),weight INT(20),gender CHAR(1),coins INT(20), PRIMARY KEY(name));
         CREATE TABLE IF NOT EXISTS bottles (size INT(20), PRIMARY KEY (size));
+        CREATE TABLE IF NOT EXISTS hats (hatId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, filePath TEXT, price INTEGER, purchased BOOLEAN DEFAULT 0);
     `).catch(function () {
         console.log("Create Table Promise Rejected");
     });
@@ -118,10 +121,19 @@ async function migrateDbIfNeeded() {
         await db.runAsync(
             `INSERT INTO user (name, height, weight, gender, coins)
              VALUES (?, ?, ?, ?, ?);`,
-            ["null", 0, 0, "U", 0]
+            ["null", 0, 0, "U", 1000]
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
+        for (let i = 1; i <= 7; i++) {
+            await db.runAsync(
+                `INSERT INTO hats (name, filePath, price)
+             VALUES (?, ?, ?);`,
+                [hat_names[i-1], "hat"+i+".png", i*100]
+            ).catch(function () {
+                console.log("Preference Promise Rejected");
+            });
+        }
         return null;
     } else if (name?.name == "null") {
         return null;

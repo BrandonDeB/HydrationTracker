@@ -3,15 +3,17 @@ import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
+import {StyleSheet} from "react-native";
 
 export default function TabLayout() {
 
   return (
     <Tabs
       screenOptions={{
-          tabBarActiveTintColor: Colors['light'].tint,
+          tabBarActiveTintColor: "#fff",
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarStyle: styles.bar
       }}>
       <Tabs.Screen
         name="index"
@@ -48,3 +50,9 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+    bar: {
+        backgroundColor: "#5FC1FF",
+    }
+});

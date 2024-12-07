@@ -86,11 +86,9 @@ export default function Charts() {
             `).catch(function () {
             console.log("Current Hydration Promise Rejected");
         });
-        console.log(hydration);
         const records: any = await db.getAllAsync('SELECT * FROM records').catch(function () {
             console.log("All Bottles Promise Rejected");
         });
-        console.log(records);
         setLineData(hydration);
     }
 
@@ -175,7 +173,6 @@ export default function Charts() {
                         />
                     </RadioGroup>
                 </ThemedView>
-                <ThemedText style={styles.text}>Achievements</ThemedText>
 
                 <ThemedView>
                     <Text style={styles.achievementsHeader}>Achievements</Text>
