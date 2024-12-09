@@ -16,15 +16,10 @@ export default function HatCard(props: any) {
 
     return (
             <TouchableOpacity key={props.id} style={[styles.card, {width: itemWidth}]} onPress={() => cardPress()}>
-                {/*<LinearGradient*/}
-                {/*    // Background Linear Gradient*/}
-                {/*    colors={['rgba(95,193,255,1)', 'rgba(95,193,255,.2)']}*/}
-                {/*    style={styles.background}*/}
-                {/*/>*/}
                 <Image style={styles.image} source={images('./' + props.image)} />
                 <View style={styles.price}>
-                    <Text style={styles.priceText}>{props.price}</Text>
-                    <Image style={styles.gold} source={images('./gold.png')} />
+                    {props.price? <Text style={styles.priceText}>{props.price}</Text> : <></>}
+                    {props.price? <Image style={styles.gold} source={images('./gold.png')} /> : <></>}
                 </View>
             </TouchableOpacity>
     );

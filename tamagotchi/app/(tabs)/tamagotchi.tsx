@@ -1,15 +1,45 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import HydrationBar from "@/components/HydrationBar";
 import { ThemedView } from "@/components/ThemedView";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import * as SQLite from "expo-sqlite";
+import {HatPurchaseModal} from "@/components/HatPurchaseModal";
+import {HatSelectModal} from "@/components/HatSelectModal";
+
+interface Hat {hatId: number, price: number, name: string, filePath: string, purchased: boolean}
 
 export default function Tamagotchi() {
     type FrogColor = "green" | "blue" | "red";
 
     const [selectedColor, setSelectedColor] = useState<FrogColor>("green");
+    const [todayIntake, setTodayIntake] = useState<number>(0);
+    const [username, setUsername] = useState<string>("");
+    const [splashText, setSplashText] = useState<string>("");
+    const [hatSelectVisible, setHatSelectVisible] = useState<boolean>(false);
+    const [selectedHat, setSelectedHat] = useState<number>(0);
+
+    const images = require.context('../../assets/drawings', true);
+
+
+    async function pullTodayInfo() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const name: { name: string } | null = await db.getFirstAsync('SELECT name FROM user');
+        if (name != null) {
+            setUsername(name.name);
+        }
+        const hydration: any = await db.getAllAsync(
+            `SELECT SUM(hydration) AS total_hydration 
+            FROM records
+            WHERE DATE(time) = CURRENT_DATE;`).catch(function () {
+            console.log("Current Hydration Promise Rejected");
+        });
+        if (hydration[0].total_hydration != null) {
+            console.log(hydration[0].total_hydration);
+            setTodayIntake(hydration[0].total_hydration);
+        }
+    }
 
     async function getFrogColor() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
@@ -20,15 +50,35 @@ export default function Tamagotchi() {
         }
     }
 
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
         getFrogColor();
-    }, []);
+        pullTodayInfo();
+        const splashTextsLoad = [
+            "Click me to play a game!",
+            "Hello "+username+", remember to drink water today!",
+            "You must be thirsty. You've only had "+todayIntake+" oz to drink today.",
+            "Ribbit.... ribbit"
+        ];
+        setSplashText(splashTextsLoad[Math.floor(Math.random() * splashTextsLoad.length)]);
+        console.log(splashText);
+        }, [])
 
+    );
+
+    const closeModal = () => {
+        setHatSelectVisible(false);
+    }
+
+    const handleSelect = (hatId: number) => {
+        setSelectedHat(hatId);
+        setHatSelectVisible(false);
+    }
 
     const frogImage: { [key in FrogColor]: any } = {
-        green: require('../../assets/drawings/frog1.jpg'),
-        blue: require('../../assets/drawings/frog2.jpg'),
-        red: require('../../assets/drawings/frog3.jpg'),
+        green: require('../../assets/drawings/frog1.png'),
+        blue: require('../../assets/drawings/frog2.png'),
+        red: require('../../assets/drawings/frog3.png'),
     };
 
     // Function to handle color change
@@ -39,7 +89,9 @@ export default function Tamagotchi() {
     return (
         <ThemedView style={{ flex: 1 }}>
             <ThemedView style={styles.topBar}>
-                <MaterialCommunityIcons name="hat-fedora" size={32} color="white" />
+                <TouchableOpacity onPress={() => { setHatSelectVisible(true) }}>
+                    <MaterialCommunityIcons name="hat-fedora" size={32} color="white" />
+                </TouchableOpacity>
                 <HydrationBar />
                 <TouchableOpacity onPress={() => { router.push("/newUser"); }}>
                     <MaterialCommunityIcons name="cog" size={32} color="white" />
@@ -47,7 +99,10 @@ export default function Tamagotchi() {
             </ThemedView>
 
             <View style={styles.container}>
-                <Image source={require('..//..//assets//drawings//swamp.png')} style={styles.background} />
+                <Image source={require('../../assets/drawings/swamp.png')} style={styles.background} />
+                <Image source={require('../../assets/drawings/textBubble.png')} style={styles.textBubble} />
+                {selectedHat ? <Image source={images('./hat'+selectedHat+'.png')} style={styles.hat} /> : <></>}
+                <View style={styles.bubble}><Text style={styles.splashText}>{splashText}</Text></View>
                 <View style={styles.imageContainer}>
                     <Image
                         source={frogImage[selectedColor]}
@@ -56,11 +111,19 @@ export default function Tamagotchi() {
                     />
                 </View>
             </View>
+            <HatSelectModal isVisible={hatSelectVisible} onClose={closeModal} onSelect={handleSelect} />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
+    hat: {
+        height: 250,
+        width: 250,
+        position: 'absolute',
+        left: "30%",
+        top: "35%"
+    },
     topBar: {
         position: "absolute",
         flexDirection: "row",
@@ -80,6 +143,13 @@ const styles = StyleSheet.create({
         position: 'relative',
         backgroundColor: 'lightblue',
     },
+    bubble: {
+        height: "50%",
+        width: "55%",
+        position: "absolute",
+        top: 200,
+        left: "9%"
+    },
     heading: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -89,6 +159,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 20,
         backgroundColor: 'lightblue',
+    },
+    splashText: {
+        position: 'absolute',
+        fontSize: 24,
+        fontFamily: "Jua"
     },
     button: {
         fontSize: 18,
@@ -104,8 +179,9 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     frogImage: {
-        width: 200,
-        height: 200,
+        top: 60,
+        width: 400,
+        height: 400,
     },
     background: {
         position: 'absolute',
@@ -115,6 +191,18 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: '100%',
         height: '100%',
+        zIndex: 0,
+        resizeMode: 'cover',
+    },
+    textBubble: {
+        position: 'absolute',
+        top: 70,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '70%',
+        height: '50%',
+        transform: "scaleX(-1)",
         zIndex: 0,
         resizeMode: 'cover',
     }

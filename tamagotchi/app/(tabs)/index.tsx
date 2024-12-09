@@ -86,10 +86,10 @@ export default function HomeScreen() {
             await pullBottles();
             await pullHydration();
 
-             //db.execSync('DROP TABLE user');
-             //db.execSync('DROP TABLE records');
-             //db.execSync('DROP TABLE bottles');
-             //db.execSync('DROP TABLE hats');
+             // db.execSync('DROP TABLE user');
+             // db.execSync('DROP TABLE records');
+             // db.execSync('DROP TABLE bottles');
+             // db.execSync('DROP TABLE hats');
         }
         setup();
     }, []);
@@ -146,7 +146,7 @@ async function migrateDbIfNeeded() {
         await db.runAsync(
             `INSERT INTO user (name, height, weight, gender, coins, frogName, frogColor)
              VALUES (?, ?, ?, ?, ?, ?, ?);`,
-            ["null", 0, 0, "U", 1000, "null", "green"]
+            ["null", 0, 0, "U", 3000, "null", "green"]
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
