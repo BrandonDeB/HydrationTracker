@@ -33,14 +33,16 @@ export default function CustomAmount({ visible, onClose, onDataUpdated }: Custom
         <Modal visible={visible} onRequestClose={onClose} transparent={true}>
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
+                    <View style={styles.input}>
                     <NumberInput
-                        trailingText={'fl oz'}
+                        trailingText={' fl oz'}
                         textFieldProps={{ style: styles.text }}
                         trailingTextStyle={styles.text}
                         onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))}
                         fractionDigits={0}
                     />
-                    <Button title={'Save Custom Amount'} onPress={saveCustomAmount} />
+                    </View>
+                    <Button title={'Add Amount'} onPress={saveCustomAmount} />
                     <Button title={'Cancel'} onPress={onClose} />
                 </View>
             </View>
@@ -59,12 +61,21 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        width: '60%',
-        height: '30%',
+        width: 200,
+        height: 200,
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
     },
+    input: {
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        width: '100%',
+        alignItems: 'center',
+    }
+
 });

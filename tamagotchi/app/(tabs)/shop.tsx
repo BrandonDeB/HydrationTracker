@@ -118,7 +118,7 @@ export default function Shop() {
         <>
         <ScrollView style={styles.scroll}>
             <View style={styles.header}>
-                <Image style={styles.image} source={require('../../assets/drawings/frog1.png')} />
+                <Image style={styles.image} source={require('../../assets/drawings/shopFrog.png')} />
                 <Text style={styles.headerText}>Would you like something today?</Text>
             </View>
             <View style={[styles.shopPanel, {height: windowHeight*1.1}]}>
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     },
     shopPanel: {
         borderRadius: 25,
-        backgroundColor: "#fff",
+        backgroundColor: "white",
     },
     headerText: {
         fontSize: 32,
@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         transform: 'scaleX(-1)',
         position: "absolute",
-        left: 25
+        left: 25,
+        top: -45,
     },
     background: {
         height: "100%",

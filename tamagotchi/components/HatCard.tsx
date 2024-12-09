@@ -28,12 +28,17 @@ export default function HatCard(props: any) {
 const styles = StyleSheet.create({
     card: {
         height: 200,
-        borderRadius: 10,
+        borderRadius: 45,
         overflow: 'hidden',
         position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#5FC1FF',
+        borderTopWidth: 0,
+        borderLeftWidth: 2,
+        borderRightWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: '#0065A3',
     },
     image: {
         width: '100%',
@@ -55,8 +60,8 @@ const styles = StyleSheet.create({
     price: {
         flexDirection: "row",
         position: 'absolute',
-        top: 0,
-        left: 100,
+        bottom: 0,
+        alignSelf: "center",
         gap: 3
     },
     priceText: {

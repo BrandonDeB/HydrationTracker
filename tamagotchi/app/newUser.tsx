@@ -40,7 +40,7 @@ export default function NewUser() {
     }
 
     const frogImage: { [key in FrogColor]: any } = {
-        green: require('../assets/drawings/frog1.jpg'),
+        green: require('../assets/drawings/frog1.png'),
         blue: require('../assets/drawings/frog2.jpg'),
         red: require('../assets/drawings/frog3.jpg'),
     };

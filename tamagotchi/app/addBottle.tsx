@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Modal, StyleSheet } from 'react-native';
+import {NumberInput} from "react-native-ui-lib";
 
 interface AddBottleProps {
     visible: boolean;
@@ -22,13 +23,15 @@ const AddBottle: React.FC<AddBottleProps> = ({ visible, onClose, onSave }) => {
         <Modal visible={visible} onRequestClose={onClose} transparent={true}>
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter bottle size"
-                        keyboardType="numeric"
-                        value={String(size)}
-                        onChangeText={(text) => setSize(Number(text))}
+                    <View style={styles.input}>
+                    <NumberInput
+                        trailingText={' fl oz'}
+                        textFieldProps={{ style: styles.text }}
+                        trailingTextStyle={styles.text}
+                        onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))}
+                        fractionDigits={0}
                     />
+                    </View>
                     <Button title="Save Bottle" onPress={handleSave} />
                     <Button title="Cancel" onPress={onClose} />
                 </View>
@@ -47,22 +50,24 @@ const styles = StyleSheet.create({
     modalContent: {
         width: 200,
         height: 200,
+        padding: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        padding: 20,
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     input: {
-        width: '80%',
-        height: 40,
-        backgroundColor: 'white',
-        marginBottom: 20,
-        textAlign: 'center',
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 10, 
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        width: '100%',
+        alignItems: 'center',
     },
+    text: {
+        fontSize: 16,
+    }
+
 });
 
 export default AddBottle;

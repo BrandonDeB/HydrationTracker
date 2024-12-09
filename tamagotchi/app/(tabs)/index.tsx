@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, View, StyleSheet, Modal, Pressable } from 'react-native';
+import {Button, View, StyleSheet, Modal, Pressable, TouchableOpacity} from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { router } from 'expo-router';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import AddBottle from "@/app/addBottle";
 import CustomAmount from "@/app/customAmount";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function HomeScreen() {
     const [waterIntake, setWaterIntake] = useState(0);
@@ -102,9 +103,13 @@ export default function HomeScreen() {
                 <ThemedText style={styles.saved}>Saved Water Bottles</ThemedText>
                 {waterBottles.map((bottle, index) => (
                     <ThemedView style={styles.bottleContainer} key={index}>
-                        <Button title="-" onPress={() => removeBottle(bottle.size)} />
+                        <TouchableOpacity onPress={() => removeBottle(bottle.size)} >
+                            <AntDesign name={'delete'} size= {28} color={'black'}></AntDesign>
+                        </TouchableOpacity>
                         <ThemedText style={styles.bottleAmount}>{bottle.size} oz</ThemedText>
-                        <Button title="+" onPress={() => drinkBottle(bottle.size)} />
+                        <TouchableOpacity onPress={() => drinkBottle(bottle.size)} >
+                            <AntDesign name={'plus'}  size={32} color="white" />
+                        </TouchableOpacity>
                     </ThemedView>
                 ))}
                 <ThemedView style={styles.buttons}>
@@ -172,6 +177,7 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 'auto',
         color: 'white',
+        fontFamily: "Jua",
     },
     bottleContainer: {
         padding: 10,
@@ -181,10 +187,14 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         width: '80%',
         borderRadius: 20,
+        borderBottomWidth: 4,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderColor: "#0065A3",
     },
     saved: {
         padding: 10,
-        fontSize: 16,
+        fontSize: 20,
         textAlign: 'center',
         fontFamily: "Jua",
     },
@@ -199,9 +209,17 @@ const styles = StyleSheet.create({
         fontSize: 48,
         backgroundColor: "#5FC1FF",
         lineHeight: 100,
+        width: '90%',
+        alignSelf: 'center',
         textAlign: "center",
         fontFamily: "Jua",
+        borderRadius: 20,
         color: 'white',
+        borderBottomWidth: 8,
+        borderLeftWidth: 2,
+        borderRightWidth: 2,
+        borderTopWidth: 2,
+        borderColor: "#0065A3",
     },
     content: {
         flex: 1,
@@ -213,5 +231,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'space-between',
         width: '80%',
+
     },
 });
