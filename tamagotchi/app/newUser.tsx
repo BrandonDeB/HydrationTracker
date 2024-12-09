@@ -117,7 +117,9 @@ export default function NewUser() {
                     </View>
 
                 </View>
-                <Button title="Submit" onPress={submitPress} color="#841584" />
+            <View style={styles.submitContainer}>
+                <Button title="Submit" onPress={submitPress} color= "white" />
+            </View>
         </ScrollView>
     );
 }
@@ -146,12 +148,13 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 16,
-        width: '45%',
+        width: '48%',
     },
     infoText: {
         fontSize: 30,
         alignSelf: 'center',
         padding: '5%',
+        fontFamily: 'Jua',
     },
     buttonsContainer: {
         top: '-20%',
@@ -178,16 +181,19 @@ const styles = StyleSheet.create({
     },
     frogImage: {
         marginHorizontal: 20,
-        borderRadius: 50,
-        borderWidth: 2,
+        borderRadius: 20,
+        borderWidth: 1,
         width: 100,
         height: 100,
+        marginLeft: '10%',
+        borderColor: 'grey',
     },
     frogOptions: {
         alignSelf: 'flex-end',
         top: "-30%",
         marginRight: "10%",
         flexDirection: 'row',
+        borderRadius: 20,
     },
     inputOwner: {
         width: '80%',
@@ -204,25 +210,13 @@ const styles = StyleSheet.create({
         height: '80%',
         alignItems: 'center',
     },
-    hydroGoal: {
-        position: 'absolute',
-        bottom: '-20%', // Adjust the bottom spacing if needed
-        width: '90%',
-        alignSelf: 'center',
-        justifyContent: 'center',
-    },
-    hydroCard: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        borderColor: '#5FC1FF',
-        borderWidth: 2,
-        width: '100%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-    },
-    hydro: {
-        fontSize: 16,
-    },
+
+    submitContainer:
+        {
+            borderRadius: 20,
+            backgroundColor: '#5FC1FF',
+            width: '80%',
+            alignSelf: 'center',
+        }
+
 });

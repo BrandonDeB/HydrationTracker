@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import HydrationBar from "@/components/HydrationBar";
 import { ThemedView } from "@/components/ThemedView";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -39,14 +39,15 @@ export default function Tamagotchi() {
     return (
         <ThemedView style={{ flex: 1 }}>
             <ThemedView style={styles.topBar}>
-                <MaterialCommunityIcons name="hat-fedora" size={32} color="black"  />
+                <MaterialCommunityIcons name="hat-fedora" size={32} color="white" />
                 <HydrationBar />
                 <TouchableOpacity onPress={() => { router.push("/newUser"); }}>
-                <MaterialCommunityIcons name="cog" size={32} color="black" />
+                    <MaterialCommunityIcons name="cog" size={32} color="white" />
                 </TouchableOpacity>
             </ThemedView>
 
             <View style={styles.container}>
+                <Image source={require('..//..//assets//drawings//swamp.png')} style={styles.background} />
                 <View style={styles.imageContainer}>
                     <Image
                         source={frogImage[selectedColor]}
@@ -61,26 +62,33 @@ export default function Tamagotchi() {
 
 const styles = StyleSheet.create({
     topBar: {
+        position: "absolute",
         flexDirection: "row",
         alignSelf: "center",
+        alignContent: 'center',
         margin: 50,
         padding: 10,
         justifyContent: "space-between",
-        backgroundColor: "rgba(76, 175, 80, 0.0)",
+        backgroundColor: "#5FC1FF",
+        borderRadius: 20,
+        zIndex: 1,
     },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'relative',
+        backgroundColor: 'lightblue',
     },
     heading: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 20,
+        backgroundColor: 'lightblue',
     },
     buttonsContainer: {
         flexDirection: 'row',
         marginBottom: 20,
+        backgroundColor: 'lightblue',
     },
     button: {
         fontSize: 18,
@@ -92,9 +100,22 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: 'center',
+        position: 'absolute',
+        zIndex: 1,
     },
     frogImage: {
         width: 200,
         height: 200,
     },
+    background: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        resizeMode: 'cover',
+    }
 });

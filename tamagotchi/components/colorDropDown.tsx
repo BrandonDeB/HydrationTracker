@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         padding: 16,
-        width: '80%',
+        width: '90%',
         alignSelf: 'center',
-        borderRadius:16,
+        borderRadius:20,
     },
     dropdown: {
         height: 50,

@@ -19,7 +19,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'game-controller' : 'game-controller-outline'} color={color} />
+            <TabBarIcon name={focused ? 'water' : 'water-outline'} color={color} />
           ),
         }}
       />

@@ -1,16 +1,18 @@
+import React, { useState, useEffect } from 'react';
+import { Button, View, StyleSheet, Modal, Pressable } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import {useState, useEffect } from 'react';
-import {Button, View, StyleSheet} from "react-native";
 import { router } from 'expo-router';
-import {ThemedView} from "@/components/ThemedView";
-import {ThemedText} from "@/components/ThemedText";
-
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import AddBottle from "@/app/addBottle";
+import CustomAmount from "@/app/customAmount";
 
 export default function HomeScreen() {
-
     const [waterIntake, setWaterIntake] = useState(0);
-    const [waterBottles, setWaterBottles] = useState([]);
+    const [waterBottles, setWaterBottles] = useState<any[]>([]);
     const [steps, setSteps] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [customModalVisible, setCustomModalVisible] = useState(false);
 
     async function pullBottles() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
@@ -35,33 +37,45 @@ export default function HomeScreen() {
     }
 
     async function drinkBottle(size: number) {
-        setWaterIntake(waterIntake+size);
+        setWaterIntake(waterIntake + size);
         const db = await SQLite.openDatabaseAsync('hydration.db');
         await db.runAsync(
             `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
             [steps, size]
-        ).catch(function () {
+        ).catch(() => {
             console.log("Bottle Add Promise Rejected");
         });
     }
 
-    async function removeBottle(size: number) {
-        const db = await SQLite.openDatabaseAsync('hydration.db');
-        await db.runAsync(
-            `DELETE FROM bottles WHERE size=?;`, size
-        ).catch(function () {
-            console.log("Bottle Remove Promise Rejected");
-        });
-        await pullBottles();
-    }
-
-    function addNewBottle() {
-        router.push('/addBottle')
-    }
 
     function addCustomAmount() {
-        router.push('/customAmount')
+        router.push('/customAmount');
     }
+
+    async function addNewBottle(size: number) {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        try {
+            await db.runAsync(`INSERT INTO bottles (size) VALUES (?);`, [size]);
+            await pullBottles();
+        } catch (error) {
+            console.error("Failed to add bottle:", error);
+        }
+    }
+
+    function handleDataUpdated() {
+        pullHydration();
+    }
+
+    async function removeBottle(size: number) {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        try {
+            await db.runAsync(`DELETE FROM bottles WHERE size=?;`, [size]);
+            await pullBottles();
+        } catch (error) {
+            console.error("Failed to remove bottle:", error);
+        }
+    }
+
 
     useEffect(() => {
         async function setup() {
@@ -72,10 +86,10 @@ export default function HomeScreen() {
             await pullBottles();
             await pullHydration();
 
-            // db.execSync('DROP TABLE user');
-            // db.execSync('DROP TABLE records');
-            // db.execSync('DROP TABLE bottles');
-            // db.execSync('DROP TABLE hats');
+             //db.execSync('DROP TABLE user');
+             //db.execSync('DROP TABLE records');
+             //db.execSync('DROP TABLE bottles');
+             //db.execSync('DROP TABLE hats');
         }
         setup();
     }, []);
@@ -84,24 +98,35 @@ export default function HomeScreen() {
         <>
             <ThemedView style={styles.content}>
                 <ThemedText style={styles.text}>Today's Total Intake</ThemedText>
-                <ThemedText style={styles.intake}>{waterIntake} fl oz</ThemedText>
+                <ThemedText style={styles.intake}>{waterIntake} oz</ThemedText>
                 <ThemedText style={styles.saved}>Saved Water Bottles</ThemedText>
-                {
-                    waterBottles.map((bottle: {size: number}, index) => (
-                        <ThemedView style={styles.bottleContainer} key={index*4}>
-                            <Button key={index*4+4} title={'-'} onPress={() => removeBottle(bottle.size)}></Button>
-                            <ThemedText style={styles.bottleAmount} key={index*4+1}>{bottle.size}</ThemedText>
-                            <Button key={index*4+2} title={'+'} onPress={() => drinkBottle(bottle.size)}></Button>
-                        </ThemedView>
-                    ))
-                }
+                {waterBottles.map((bottle, index) => (
+                    <ThemedView style={styles.bottleContainer} key={index}>
+                        <Button title="-" onPress={() => removeBottle(bottle.size)} />
+                        <ThemedText style={styles.bottleAmount}>{bottle.size} oz</ThemedText>
+                        <Button title="+" onPress={() => drinkBottle(bottle.size)} />
+                    </ThemedView>
+                ))}
                 <ThemedView style={styles.buttons}>
-                    <Button color={"#5FC1FF"} title={'Add New Bottle'} onPress={addNewBottle}></Button>
-                    <Button color={"#5FC1FF"} title={'Add Custom Amount'} onPress={addCustomAmount}></Button>
+                    <Button color="#5FC1FF" title="Add Custom Amount" onPress={() => setCustomModalVisible(true)} />
+                    <Button color="#5FC1FF" title="Add New Bottle" onPress={() => setModalVisible(true)} />
                 </ThemedView>
             </ThemedView>
+
+            <AddBottle
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onSave={(size) => addNewBottle(size)}
+            />
+
+            <CustomAmount
+                visible={customModalVisible}
+                onClose={() => setCustomModalVisible(false)}
+                onDataUpdated={handleDataUpdated}
+            />
+
         </>
-    )
+    );
 }
 
 async function migrateDbIfNeeded() {
@@ -145,7 +170,8 @@ async function migrateDbIfNeeded() {
 const styles = StyleSheet.create({
     bottleAmount: {
         marginLeft: 'auto',
-        marginRight:'auto'
+        marginRight: 'auto',
+        color: 'white',
     },
     bottleContainer: {
         padding: 10,
@@ -153,42 +179,34 @@ const styles = StyleSheet.create({
         backgroundColor: "#5FC1FF",
         flexDirection: 'row',
         alignSelf: 'center',
-        width: '80%'
+        width: '80%',
+        borderRadius: 20,
     },
     saved: {
         padding: 10,
         fontSize: 16,
         textAlign: 'center',
-        fontFamily: "Jua"
+        fontFamily: "Jua",
     },
     text: {
         padding: 10,
         paddingTop: 80,
         fontSize: 24,
-        lineHeight: 32,
         textAlign: "center",
-        fontFamily: "Jua"
+        fontFamily: "Jua",
     },
     intake: {
         fontSize: 48,
-        width: '100%',
         backgroundColor: "#5FC1FF",
         lineHeight: 100,
         textAlign: "center",
-        fontFamily: "Jua"
-    },
-    container: {
-        flex: 1,
-    },
-    header: {
-        height: 250,
-        overflow: 'hidden',
+        fontFamily: "Jua",
+        color: 'white',
     },
     content: {
         flex: 1,
         padding: 0,
         gap: 16,
-        height: "100%",
     },
     buttons: {
         flexDirection: 'row',
@@ -196,7 +214,4 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '80%',
     },
-    button: {
-        textAlign: "center",
-    }
 });

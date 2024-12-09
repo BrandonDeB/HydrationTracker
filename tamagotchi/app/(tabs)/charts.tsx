@@ -236,14 +236,19 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         fontSize: 24,
         margin: 10,
+        fontFamily: 'Jua',
     },
     achievementsHeader: {
         fontSize: 24,
         marginTop: 24,
+        width: '70%',
+        alignSelf: 'center',
+        borderRadius: 20,
         backgroundColor: "#5FC1FF",
         textAlign: "center",
         padding: 8,
         color: "#ffffff",
+        fontFamily: 'Jua',
     },
     achievementsPane: {
         padding: 16,
@@ -260,9 +265,10 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     achievementDescription: {
-        fontSize: 20,
+        fontSize: 16,
         marginBottom: 8,
-        color: "#455a64",
+        color: "black",
+        fontFamily: "Jua",
     },
     week: {
         fontSize: 16,

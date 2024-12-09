@@ -1,42 +1,50 @@
-import {
-    Text,
-    RadioGroup,
-    RadioButton,
-    TextField,
-    WheelPicker,
-    WheelPickerProps,
-    NumberInput
-} from 'react-native-ui-lib';
-import {Component, useMemo, useState} from "react";
-import { ThemedView } from '@/components/ThemedView';
-import {Button, StyleSheet} from "react-native";
-import {ThemedText} from "@/components/ThemedText";
-import * as SQLite from "expo-sqlite";
-import {router} from "expo-router";
+import React, { useState } from 'react';
+import { Button, Modal, View, StyleSheet } from 'react-native';
+import { NumberInput } from 'react-native-ui-lib';
+import * as SQLite from 'expo-sqlite';
 
-export default function CustomAmount () {
+interface CustomAmountProps {
+    visible: boolean;
+    onClose: () => void;
+    onDataUpdated: () => void;
+}
 
+export default function CustomAmount({ visible, onClose, onDataUpdated }: CustomAmountProps) {
     const [size, setSize] = useState(0);
-    const [steps, setSteps] = useState(0);
+
 
     async function saveCustomAmount() {
         const db = await SQLite.openDatabaseAsync('hydration.db');
-        await db.runAsync(
-            `INSERT INTO records (steps, hydration) VALUES (?, ?);`,
-            [steps, size]
-        ).catch(function () {
-            console.log("Custom Amount Failed");
-        });
-        router.replace('/(tabs)');
+        try {
+
+            await db.runAsync(
+                `INSERT INTO records (hydration) VALUES (?);`,
+                [size]
+            );
+            console.log('Custom Amount Saved');
+            onDataUpdated();
+        } catch (error) {
+            console.error("Custom Amount Failed", error);
+        }
+        onClose();
     }
 
     return (
-        <>
-            <ThemedView style={styles.content}>
-                <NumberInput trailingText={'fl oz'} textFieldProps={{style: styles.text}} trailingTextStyle={styles.text} onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))} fractionDigits={0} />
-                <Button title={'Custom Amount'} onPress={saveCustomAmount}></Button>
-            </ThemedView>
-        </>
+        <Modal visible={visible} onRequestClose={onClose} transparent={true}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <NumberInput
+                        trailingText={'fl oz'}
+                        textFieldProps={{ style: styles.text }}
+                        trailingTextStyle={styles.text}
+                        onChangeNumber={(sizeValue) => setSize(Number(sizeValue.userInput))}
+                        fractionDigits={0}
+                    />
+                    <Button title={'Save Custom Amount'} onPress={saveCustomAmount} />
+                    <Button title={'Cancel'} onPress={onClose} />
+                </View>
+            </View>
+        </Modal>
     );
 }
 
@@ -44,18 +52,19 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
     },
-    container: {
+    modalContainer: {
         flex: 1,
-        backgroundColor: '#5FC1FF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    header: {
-        height: 250,
-        overflow: 'hidden',
-    },
-    content: {
-        flex: 1,
-        padding: 32,
-        gap: 16,
-        overflow: 'hidden',
+    modalContent: {
+        width: '60%',
+        height: '30%',
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
