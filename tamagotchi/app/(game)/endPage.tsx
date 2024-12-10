@@ -11,14 +11,7 @@ export default function EndPage() {
             style={styles.background}
         >
             <View style={styles.container}>
-               
-                <Text style={styles.heading}>Game Over!</Text>
-
-                <Image
-                    source={require('../../assets/drawings/frog1.png')}
-                    style={styles.frogImage}
-                />
-
+                {/* Coin Earnings Section */}
                 <View style={styles.earnedContainer}>
                     <Text style={styles.earnedText}>You earned 300 coins</Text>
                     <Image
@@ -27,6 +20,25 @@ export default function EndPage() {
                     />
                 </View>
 
+                {/* Frog and Text Bubble */}
+                <View style={styles.frogContainer}>
+                    {/* Text Bubble */}
+                    <View style={styles.textBubbleContainer}>
+                        <Image
+                            source={require('../../assets/drawings/textBubble.png')}
+                            style={[styles.textBubble, styles.flippedBubble]}
+                        />
+                        <Text style={styles.textBubbleText}>Game Over!</Text>
+                    </View>
+
+                    {/* Frog Image */}
+                    <Image
+                        source={require('../../assets/drawings/frog1.png')}
+                        style={styles.frogImage}
+                    />
+                </View>
+
+                {/* Back Button */}
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => router.push('/tamagotchi')}
@@ -46,33 +58,22 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         resizeMode: 'cover',
-        justifyContent: 'center',
     },
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-    },
-    heading: {
-        fontSize: 36,
-        fontWeight: 'bold',
-        fontFamily: 'Jua',
-        color: 'white',
-        marginBottom: 30,
-    },
-    frogImage: {
-        width: 150,
-        height: 150,
-        marginBottom: 20,
+        paddingBottom: 50,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     earnedContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 40,
+        marginTop: 250, // Adjust positioning
+        marginBottom: 30, // Space below the earnings text
     },
     earnedText: {
-        fontSize: 24,
+        fontSize: 30,
         fontFamily: 'Jua',
         fontWeight: 'bold',
         color: 'white',
@@ -82,16 +83,54 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
+    frogContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 100,
+    },
+    frogImage: {
+        width: 300,
+        height: 300,
+        marginTop: 20,
+    },
+    textBubbleContainer: {
+        position: 'absolute',
+        top: -100,
+        right: 20,
+        alignItems: 'center',
+    },
+    textBubble: {
+        width: 440,
+        height: 340,
+        resizeMode: 'contain',
+    },
+    flippedBubble: {
+        transform: [{ scaleX: -1 }],
+    },
+    textBubbleText: {
+        position: 'absolute',
+        top: '38%',
+        left: '10%',
+        right: '10%',
+        fontSize: 22,
+        fontFamily: 'Jua',
+        color: 'black',
+        textAlign: 'center',
+        lineHeight: 22,
+        flexWrap: 'wrap',
+    },
     button: {
+        position: 'absolute',
+        bottom: 50,
         backgroundColor: '#5FC1FF',
         paddingVertical: 20,
         paddingHorizontal: 40,
         borderRadius: 25,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5, 
+        shadowRadius: 5,
+        elevation: 6,
     },
     buttonText: {
         fontSize: 22,

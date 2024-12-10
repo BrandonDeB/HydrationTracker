@@ -33,6 +33,9 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen name="(game)/startPage" options={{ headerShown: false }} />
+          <Stack.Screen name="(game)/gamePage" options={{ headerShown: false }} />
+          <Stack.Screen name="(game)/endPage" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
   );

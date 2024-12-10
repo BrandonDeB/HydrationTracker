@@ -105,7 +105,7 @@ export default function Tamagotchi() {
                 <Image source={require('../../assets/drawings/textBubble.png')} style={styles.textBubble} />
                 {selectedHat ? <Image source={images('./hat'+selectedHat+'.png')} style={styles.hat} /> : <></>}
                 <View style={styles.bubble}><Text style={styles.splashText}>{splashText}</Text></View>
-                <TouchableOpacity onPress={() => router.push('/(game)/startPage')}>
+                <TouchableOpacity onPress={() => router.replace('/(game)/startPage')}>
                     <Image
                         source={frogImage[selectedColor]}
                         style={styles.frogImage}
