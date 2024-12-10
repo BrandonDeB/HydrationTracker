@@ -1,5 +1,10 @@
 {
   "dependencies": {
+    "expo": "^52.0.17",
     "react-native-linear-gradient": "^2.8.3"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "typescript": "^5.3.3"
   }
 }

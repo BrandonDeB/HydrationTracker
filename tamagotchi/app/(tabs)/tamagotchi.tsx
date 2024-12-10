@@ -7,6 +7,8 @@ import {router, useFocusEffect} from "expo-router";
 import * as SQLite from "expo-sqlite";
 import {HatPurchaseModal} from "@/components/HatPurchaseModal";
 import {HatSelectModal} from "@/components/HatSelectModal";
+import { useRouter } from 'expo-router';
+
 
 interface Hat {hatId: number, price: number, name: string, filePath: string, purchased: boolean}
 
@@ -103,13 +105,13 @@ export default function Tamagotchi() {
                 <Image source={require('../../assets/drawings/textBubble.png')} style={styles.textBubble} />
                 {selectedHat ? <Image source={images('./hat'+selectedHat+'.png')} style={styles.hat} /> : <></>}
                 <View style={styles.bubble}><Text style={styles.splashText}>{splashText}</Text></View>
-                <View style={styles.imageContainer}>
+                <TouchableOpacity onPress={() => router.push('/(game)/startPage')}>
                     <Image
                         source={frogImage[selectedColor]}
                         style={styles.frogImage}
                         resizeMode="contain"
                     />
-                </View>
+                </TouchableOpacity>
             </View>
             <HatSelectModal isVisible={hatSelectVisible} onClose={closeModal} onSelect={handleSelect} />
         </ThemedView>
