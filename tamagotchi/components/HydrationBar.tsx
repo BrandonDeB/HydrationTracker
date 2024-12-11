@@ -70,7 +70,7 @@ export default function HydrationBar() {
                 }}
             />
             </View>
-            <Text style={styles.text}>{`${Math.min(hydration, 100)}%`}</Text>
+            <Text style={styles.text}>{`${Math.min(hydration, 100).toFixed(0)}%`}</Text>
         </ThemedView>
     );
 }

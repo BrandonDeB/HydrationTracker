@@ -88,7 +88,7 @@ export default function HomeScreen() {
             await pullHydration();
 
               //db.execSync('DROP TABLE user');
-              //db.execSync('DROP TABLE records');
+              //b.execSync('DROP TABLE records');
               //db.execSync('DROP TABLE bottles');
               //db.execSync('DROP TABLE hats');
         }
