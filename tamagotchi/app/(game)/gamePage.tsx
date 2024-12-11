@@ -22,6 +22,28 @@ const OBSTACLE_COUNT = 3;
 export default function GamePage() {
     const router = useRouter();
 
+
+    const [selectedColor, setSelectedColor] = useState<'green' | 'blue' | 'red'>('green'); // Default color
+
+    const frogImages = {
+        green: require('../../assets/drawings/frog1.png'),
+        blue: require('../../assets/drawings/frog2.png'),
+        red: require('../../assets/drawings/frog3.png'),
+    };
+
+    async function getFrogColor() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const color: { frogColor: "green" | "blue" | "red" } | null = await db.getFirstAsync('SELECT frogColor FROM user');
+        console.log(color);
+        if (color != null) {
+            setSelectedColor(color.frogColor);
+        }
+    }
+
+    useEffect(() => {
+        getFrogColor();
+    }, []);
+
     const getRandomYPosition = useCallback((): number => {
         const possiblePositions = [height - 300, height - 500, height - 700];
         return possiblePositions[Math.floor(Math.random() * possiblePositions.length)];
@@ -167,7 +189,7 @@ export default function GamePage() {
                     {obstacles.map((obstacle, index) => (
                         <Image
                             key={index}
-                            source={require('../../assets/drawings/frog3.png')}
+                            source={require('../../assets/drawings/croc.png')}
                             style={[styles.obstacle, { left: obstacle.x, top: obstacle.y }]}
                         />
                     ))}
@@ -185,7 +207,7 @@ export default function GamePage() {
 
                     <View style={styles.frogContainer}>
                         <Image
-                            source={require('../../assets/drawings/frog1.png')}
+                            source={frogImages[selectedColor]}
                             style={[styles.frogImage, { transform: [{ translateY: frogY - height / 2 }] }]} // Dynamically position the frog
                         />
                     </View>
@@ -222,8 +244,8 @@ const styles = StyleSheet.create({
     },
     obstacle: {
         position: 'absolute',
-        width: COIN_SIZE,
-        height: COIN_SIZE,
+        width: 100,
+        height: 100,
     },
     frogImage: {
         position: 'absolute',

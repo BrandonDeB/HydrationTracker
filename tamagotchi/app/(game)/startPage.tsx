@@ -1,9 +1,30 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as SQLite from "expo-sqlite";
 
 export default function StartPage() {
     const router = useRouter();
+    const [selectedColor, setSelectedColor] = useState<'green' | 'blue' | 'red'>('green'); // Default color
+
+    const frogImages = {
+        green: require('../../assets/drawings/frog1.png'),
+        blue: require('../../assets/drawings/frog2.png'),
+        red: require('../../assets/drawings/frog3.png'),
+    };
+
+    async function getFrogColor() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        const color: { frogColor: "green" | "blue" | "red" } | null = await db.getFirstAsync('SELECT frogColor FROM user');
+        console.log(color);
+        if (color != null) {
+            setSelectedColor(color.frogColor);
+        }
+    }
+
+    useEffect(() => {
+        getFrogColor();
+    }, []);
 
     return (
         <ImageBackground
@@ -28,7 +49,7 @@ export default function StartPage() {
 
                     {/* Frog Image */}
                     <Image
-                        source={require('../../assets/drawings/frog1.png')}
+                        source={(frogImages[selectedColor])}
                         style={styles.frogImage}
                     />
                 </View>

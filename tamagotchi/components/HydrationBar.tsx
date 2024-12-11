@@ -66,11 +66,11 @@ export default function HydrationBar() {
             <View
                 style={{
                     ...styles.bar,
-                    width: `${hydration}%`, // Bar width reflects hydration percentage
+                    width: `${Math.min(hydration, 100)}%`, // Bar width reflects hydration percentage
                 }}
             />
             </View>
-            <Text style={styles.text}>{Math.trunc(hydration)+"%"}</Text>
+            <Text style={styles.text}>{`${Math.min(hydration, 100)}%`}</Text>
         </ThemedView>
     );
 }

@@ -21,6 +21,8 @@ export default function Tamagotchi() {
     const [splashText, setSplashText] = useState<string>("");
     const [hatSelectVisible, setHatSelectVisible] = useState<boolean>(false);
     const [selectedHat, setSelectedHat] = useState<number>(0);
+    const sickFrogImage = require('../../assets/drawings/frog_dead.png');
+
 
     const images = require.context('../../assets/drawings', true);
 
@@ -41,6 +43,18 @@ export default function Tamagotchi() {
             console.log(hydration[0].total_hydration);
             setTodayIntake(hydration[0].total_hydration);
         }
+        const totalHydration = hydration?.[0]?.total_hydration || 0; // Default to 0 if no result
+
+        setTodayIntake(totalHydration);
+
+        if (totalHydration === 0) {
+            console.log("Setting sick frog pose");
+            setCurrentPose(sickFrogImage);
+        } else {
+            console.log("Setting random frog pose");
+            setCurrentPose(getRandomPose(selectedColor));
+        }
+
     }
 
     async function getFrogColor() {
@@ -51,6 +65,8 @@ export default function Tamagotchi() {
             setSelectedColor(color.frogColor);
         }
     }
+
+
 
     useFocusEffect(
         useCallback(() => {
@@ -64,7 +80,7 @@ export default function Tamagotchi() {
         ];
         setSplashText(splashTextsLoad[Math.floor(Math.random() * splashTextsLoad.length)]);
         console.log(splashText);
-        }, [])
+        }, [selectedColor])
 
     );
 
@@ -77,16 +93,38 @@ export default function Tamagotchi() {
         setHatSelectVisible(false);
     }
 
+    const getRandomPose = (color: FrogColor): any => {
+        const poses = frogImage[color];
+        return poses[Math.floor(Math.random() * poses.length)];
+    };
+
     const frogImage: { [key in FrogColor]: any } = {
-        green: require('../../assets/drawings/frog1.png'),
-        blue: require('../../assets/drawings/frog2.png'),
-        red: require('../../assets/drawings/frog3.png'),
+        green: [
+            require('../../assets/drawings/frog1.png'),
+            require('../../assets/drawings/frog1_sit.png'),
+            require('../../assets/drawings/frog1_wink.png'),
+            require('../../assets/drawings/frog1_water.png'),
+        ],
+        blue: [
+            require('../../assets/drawings/frog2.png'),
+            require('../../assets/drawings/frog2_sit.png'),
+            require('../../assets/drawings/frog2_wink.png'),
+            require('../../assets/drawings/frog2_water.png'),
+        ],
+        red: [
+            require('../../assets/drawings/frog3.png'),
+            require('../../assets/drawings/frog3_sit.png'),
+            require('../../assets/drawings/frog3_wink.png'),
+            require('../../assets/drawings/frog3_water.png'),
+        ],
     };
 
     // Function to handle color change
     const handleColorChange = (color: FrogColor) => {
         setSelectedColor(color);
     };
+
+    const [currentPose, setCurrentPose] = useState<any>(getRandomPose("green"));
 
     return (
         <ThemedView style={{ flex: 1 }}>
@@ -107,7 +145,7 @@ export default function Tamagotchi() {
                 <View style={styles.bubble}><Text style={styles.splashText}>{splashText}</Text></View>
                 <TouchableOpacity onPress={() => router.replace('/(game)/startPage')}>
                     <Image
-                        source={frogImage[selectedColor]}
+                        source={currentPose}
                         style={styles.frogImage}
                         resizeMode="contain"
                     />
