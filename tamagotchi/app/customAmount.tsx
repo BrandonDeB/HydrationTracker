@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, View, StyleSheet } from 'react-native';
 import { NumberInput } from 'react-native-ui-lib';
 import * as SQLite from 'expo-sqlite';
+import {Audio} from "expo-av";
 
 interface CustomAmountProps {
     visible: boolean;
@@ -26,6 +27,10 @@ export default function CustomAmount({ visible, onClose, onDataUpdated }: Custom
         } catch (error) {
             console.error("Custom Amount Failed", error);
         }
+        const { sound: loadedSound } = await Audio.Sound.createAsync(
+            require('../assets/get-comfy.mp3')
+        );
+        await loadedSound.playAsync();
         onClose();
     }
 

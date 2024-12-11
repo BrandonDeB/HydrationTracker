@@ -7,6 +7,7 @@ import { ThemedText } from "@/components/ThemedText";
 import AddBottle from "@/app/addBottle";
 import CustomAmount from "@/app/customAmount";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import {Audio} from "expo-av";
 
 export default function HomeScreen() {
     const [waterIntake, setWaterIntake] = useState(0);
@@ -46,11 +47,10 @@ export default function HomeScreen() {
         ).catch(() => {
             console.log("Bottle Add Promise Rejected");
         });
-    }
-
-
-    function addCustomAmount() {
-        router.push('/customAmount');
+        const { sound: loadedSound } = await Audio.Sound.createAsync(
+            require('../../assets/get-comfy.mp3')
+        );
+        await loadedSound.playAsync();
     }
 
     async function addNewBottle(size: number) {

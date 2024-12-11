@@ -8,8 +8,10 @@ import {
     TouchableWithoutFeedback,
     Dimensions,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import {useFocusEffect, useRouter} from 'expo-router';
 import * as SQLite from "expo-sqlite";
+import {Sound} from "expo-av/build/Audio/Sound";
+import {Audio} from "expo-av";
 
 const { height, width } = Dimensions.get('window');
 
@@ -45,7 +47,7 @@ export default function GamePage() {
     const endGame = async () => {
         const db = await SQLite.openDatabaseAsync('hydration.db');
         await db.runAsync(
-            `UPDATE user SET coins = coins + 100`
+            `UPDATE user SET coins = coins + 100`,
         ).catch(function () {
             console.log("Preference Promise Rejected");
         });
@@ -116,6 +118,33 @@ export default function GamePage() {
             frogTop < obstacleBottom
         );
     };
+
+
+    useFocusEffect(
+        useCallback(() => {
+            let sound: Sound | undefined;
+
+            const initialize = async () => {
+                console.log('Loading Sound');
+                const { sound: loadedSound } = await Audio.Sound.createAsync(
+                    require('../../assets/BEBOs_REVENGE.mp3')
+                );
+                sound = loadedSound;
+                console.log('Playing Sound');
+                await sound.playAsync();
+            };
+
+            initialize();
+
+            return () => {
+                if (sound) {
+                    console.log('Unloading Sounds');
+                    sound.stopAsync();
+                    sound.unloadAsync();
+                }
+            };
+        }, [])
+    );
 
     useEffect(() => {
         if (!gameActive) return;
