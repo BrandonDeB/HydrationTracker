@@ -1,17 +1,22 @@
 import {StyleSheet, ScrollView, Text, View} from 'react-native';
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {BarChart, LineChart} from "react-native-gifted-charts";
 import {ThemedView} from "@/components/ThemedView";
 import {ThemedText} from "@/components/ThemedText";
 import * as SQLite from "expo-sqlite";
 import {RadioButton, RadioGroup} from "react-native-ui-lib";
-import { ProgressBar } from 'react-native-paper';
+import {useFocusEffect} from "expo-router";
+import {ProgressBar} from "react-native-paper";
 
 export default function Charts() {
 
     const [barData, setBarData] = useState([]);
     const [bar, setBar] = useState(true);
     const [lineData, setLineData] = useState([]);
+
+
+    // Sample achievements data with progress tracking
+    const [achievements, setAchievements] = useState<any[]>([]);
 
     useEffect(() => {
         pullChartData('-6 days');
@@ -25,6 +30,66 @@ export default function Charts() {
             await pullBarData(days);
             setBar(true);
         }
+    }
+
+    async function pullAchievementProgress() {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        let oH = 0;
+        let tH = 0;
+        let sP = 0;
+        let hP = 0;
+        const hatProgress: any = await db.getFirstAsync(`
+                SELECT 
+            COUNT(*) AS totalHats,
+            SUM(CASE WHEN purchased = 1 THEN 1 ELSE 0 END) AS purchasedHats
+        FROM hats;`).catch(function () {
+            console.log("Hat Progress Promise Rejected");
+        });
+        if (hatProgress != null) {
+            tH = hatProgress.totalHats;
+            oH = hatProgress.purchasedHats;
+        }
+        const streakProgress: any = await db.getFirstAsync(`
+                SELECT MAX(streakLength) AS longestStreak
+                FROM (
+                    SELECT COUNT(*) AS streakLength
+                    FROM (
+                        SELECT DATE(time) AS trackingDate,
+                               ROW_NUMBER() OVER (ORDER BY DATE(time)) - JULIANDAY(DATE(time)) AS streakGroup
+                        FROM records
+                        GROUP BY DATE(time)
+                    )
+                    GROUP BY streakGroup
+                );`).catch(function () {
+                            console.log("Streak Promise Rejected");
+                        });
+        if (streakProgress != null) {
+            if (streakProgress.longestStreak !== null) {
+                sP = streakProgress.longestStreak;
+            }
+        }
+        const hydrationProgressDB: any = await db.getFirstAsync(`
+                SELECT SUM(hydration) AS totalHydration FROM records;
+        `).catch(function () {
+            console.log("Hydration Progress Promise Rejected");
+        });
+        if (hydrationProgressDB != null) {
+            if (hydrationProgressDB.totalHydration !== null) {
+                console.log("Settings hydration progress")
+                hP = hydrationProgressDB.totalHydration;
+            }
+        }
+        let arr = []
+        if (sP < 7) {
+            arr.push({id: 1, description: "Track water intake for 7 consecutive days.", progress: sP, goal: 7})
+        }
+        if (hP < 1000) {
+            arr.push({id: 2, description: "Drink 1000 fl oz of water", progress: hP, goal: 1000})
+        }
+        if (oH < tH) {
+            arr.push({id: 3, description: "Unlock 5 hats.", progress: oH, goal: 5})
+        }
+        setAchievements(arr)
     }
 
     async function pullBarData(days: string) {
@@ -92,13 +157,6 @@ export default function Charts() {
         setLineData(hydration);
     }
 
-    // Sample achievements data with progress tracking
-    const [achievements, setAchievements] = useState([
-        {id: 1, description: "Track water intake for 7 consecutive days.", progress: 6, goal: 7},
-        {id: 2, description: "Hit your hydration goal 5 times in a week.", progress: 1, goal: 5},
-        {id: 3, description: "Log water before 9 AM for 3 days in a row.", progress: 2, goal: 3},
-    ]);
-
     // Function to calculate progress percentage
     const calculateProgress = (progress:any, goal:any) => {
         if (goal === 0) return 0;
@@ -113,12 +171,12 @@ export default function Charts() {
         return "#F44336"; // Red
     };
 
-    // Automatically remove completed achievements
-    useEffect(() => {
-        setAchievements(prevAchievements => prevAchievements.filter(item => item.progress < item.goal));
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            pullAchievementProgress();
+        }, [])
 
-    const hasAchievements = Array.isArray(achievements) && achievements.length > 0;
+    );
 
     return (
         <>
@@ -165,41 +223,38 @@ export default function Charts() {
                             borderRadius={0}
                             label={"Last 30 Days"}
                         />
-                        <RadioButton
-                            value={"-0 days"}
-                            size={15}
-                            borderRadius={0}
-                            label={"Today"}
-                        />
                     </RadioGroup>
                 </ThemedView>
 
                 <ThemedView>
                     <Text style={styles.achievementsHeader}>Achievements</Text>
                     <ScrollView style={styles.achievementsPane}>
-                        {hasAchievements ? (
+                        {achievements.length > 0 ? (
                             achievements.map((item) => {
-                                const clampedProgress = item.goal === 0 ? 0 : Math.min(1, Math.max(0, parseFloat((item.progress / item.goal).toFixed(2))));
-                                return(
-                                    <View key={item.id} style={styles.achievementItem}>
-                                        <Text style={styles.achievementDescription}>{item.description}</Text>
+                                    const progress = isNaN(item.progress) || item.progress < 0 ? 0 : item.progress;
+                                    const goal = isNaN(item.goal) || item.goal <= 0 ? 1 : item.goal; // Avoid division by zero
+                                    const clampedProgress = Math.round(Math.min(1, Math.max(0, (progress / goal)))*10000)/10000;
+                                    return(
+                                        <View key={item.id} style={styles.achievementItem}>
+                                            <Text style={styles.achievementDescription}>{item.description}</Text>
 
-                                        {/* Progress Bar */}
-                                        <ProgressBar
-                                            progress={clampedProgress}
-                                            color={getProgressColor(item.progress, item.goal)}
-                                            style={styles.progressBar}
-                                        />
+                                            {/* Progress Bar */}
+                                            <ProgressBar
+                                                animatedValue={clampedProgress}
+                                                color={getProgressColor(progress, goal)}
+                                                style={styles.progressBar}
+                                            />
 
-                                        {/* Progress Percentage */}
-                                        <Text style={styles.progressText}>
-                                            {Math.round(calculateProgress(item.progress, item.goal))}% Complete
-                                        </Text>
-                                    </View>
-                                );
-                            })
+                                            {/* Progress Percentage */}
+                                            <Text style={styles.progressText}>
+                                                {Math.round(calculateProgress(progress, goal))}% Complete
+                                            </Text>
+                                        </View>
+                                    );
+                                }
+                                )
                         ) : (
-                            <Text style={styles.emptyAchievements}>No achievements to display.</Text>
+                            <Text>No more achievements!</Text>
                         )}
                     </ScrollView>
                 </ThemedView>

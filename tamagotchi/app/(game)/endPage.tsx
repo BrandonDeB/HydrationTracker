@@ -13,7 +13,7 @@ export default function EndPage() {
             <View style={styles.container}>
                 {/* Coin Earnings Section */}
                 <View style={styles.earnedContainer}>
-                    <Text style={styles.earnedText}>You earned 300 coins</Text>
+                    <Text style={styles.earnedText}>You earned 100 coins</Text>
                     <Image
                         source={require('../../assets/drawings/gold.png')}
                         style={styles.coinImage}

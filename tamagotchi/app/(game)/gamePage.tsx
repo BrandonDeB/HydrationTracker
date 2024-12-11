@@ -9,6 +9,7 @@ import {
     Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as SQLite from "expo-sqlite";
 
 const { height, width } = Dimensions.get('window');
 
@@ -41,9 +42,15 @@ export default function GamePage() {
         resetObstacles();
     };
 
-    const endGame = () => {
+    const endGame = async () => {
+        const db = await SQLite.openDatabaseAsync('hydration.db');
+        await db.runAsync(
+            `UPDATE user SET coins = coins + 100`
+        ).catch(function () {
+            console.log("Preference Promise Rejected");
+        });
         setGameActive(false);
-        router.push('/endPage');
+        router.push('/(game)/endPage');
     };
 
     const resetObstacles = () => {
