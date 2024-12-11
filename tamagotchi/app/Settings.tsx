@@ -11,7 +11,7 @@ import OwnerInfo from "@/components/ownerInfo";
 import GenderDropdown from "@/components/genderDropdown";
 import {NumberInput} from "react-native-ui-lib";
 
-export default function NewUser() {
+export default function Settings() {
     type FrogColor = "green" | "blue" | "red";
 
     const navigation = useNavigation();

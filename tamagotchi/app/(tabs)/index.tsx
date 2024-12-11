@@ -82,13 +82,13 @@ export default function HomeScreen() {
         async function setup() {
             const db = await SQLite.openDatabaseAsync('hydration.db');
             if (await migrateDbIfNeeded() == null) {
-                router.push('/newUser');
+                router.replace('/Settings');
             }
             await pullBottles();
             await pullHydration();
 
               //db.execSync('DROP TABLE user');
-              //b.execSync('DROP TABLE records');
+              //db.execSync('DROP TABLE records');
               //db.execSync('DROP TABLE bottles');
               //db.execSync('DROP TABLE hats');
         }

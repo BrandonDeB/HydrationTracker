@@ -133,7 +133,7 @@ export default function Tamagotchi() {
                     <MaterialCommunityIcons name="hat-fedora" size={32} color="white" />
                 </TouchableOpacity>
                 <HydrationBar />
-                <TouchableOpacity onPress={() => { router.push("/newUser"); }}>
+                <TouchableOpacity onPress={() => { router.push("/Settings"); }}>
                     <MaterialCommunityIcons name="cog" size={32} color="white" />
                 </TouchableOpacity>
             </ThemedView>
